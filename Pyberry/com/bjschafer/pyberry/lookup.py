@@ -10,10 +10,10 @@ class Lookup(object):
     Looks up book information online.  Currently only uses Google Books API.
     Also, currently only allows searching by ISBN.
     
-    @todo less hardcoding of searching
-    @todo add other search resources
-    @todo allow search by any attribute
-    @todo better error handling.
+    @TODO: less hardcoding of searching (1.0)
+    @TODO: add other search resources (2.0)
+    @TODO: allow search by any attribute (1.0)
+    @TODO: better error handling. (1.0)
     '''
 
 

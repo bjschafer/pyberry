@@ -12,16 +12,18 @@ class Bdb(object):
     or serialize them or anything awful like that.  it just
     stores each aspect of the object in the db as a separate
     column.  the bc is the primary key.
-
-    @todo implement searching of database
     '''
 
 
     def __init__(self, location):
-        '''creates the connection to the database, currently
+        '''
+        creates the connection to the database, currently
         an example file.  i should change that but i don't feel
         like it at the moment.  it also creates the table/schema
-        if it doesn't exist.'''
+        if it doesn't exist.
+        '''
+        self.fields = ["bc", "isbn", "title", "author", "pages", "publ_year",
+                       "publisher", "location", "description", "call_num", "tags"]
         self.conn = sqlite.connect(location)
         c = self.conn.cursor()
         c.execute('''CREATE TABLE IF NOT EXISTS books
@@ -42,17 +44,53 @@ class Bdb(object):
         c.close()
                 
     def store(self, book):
-        '''stores the book object in the database.  again, it
-        doesn't serialize it or do anything awful like that.'''
+        '''
+        stores the book object in the database.  again, it
+        doesn't serialize it or do anything awful like that.
+        '''
         c = self.conn.cursor()
         for t in book.getListRepresentation(): # not sure if this is the right way to do it.
             c.execute('''INSERT OR REPLACE INTO books VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',t)
         self.conn.commit()
         c.close()
+        
+    def delete(self, book):
+        '''
+        Deletes a book in the database.  This will require
+        some testing to ensure I've gotten it right.
+        '''
+        c = self.conn.cursor()
+        c.execute('''DELETE FROM books WHERE bc=?''', book.bc)
+        self.conn.commit()
             
     def retrieve(self, bc):
-        '''retrieves a book given the barcode/unique id.'''
+        '''
+        retrieves a book given the barcode/unique id.
+        '''
         c = self.conn.cursor()
         c.execute('''SELECT * FROM books WHERE bc=?''', bc)
         return c.fetchone()
+    
+    def search(self, field, term):
+        '''Searches for records given the field to search and
+        the term to search for.
+        
+        I couldn't say what might happen if an invalid field is
+        given.  So I'll add error checking.
+        '''
+        if field not in self.fields:
+            return -1
+        
+        else:
+            c = self.conn.cursor
+            c.execute('''SELECT * FROM books WHERE ? LIKE ?''', [field, term])
+            return c.fetchall()
+        
+    def getAll(self):
+        '''
+        Returns a list of all items in the database.
+        '''
+        c = self.conn.cursor
+        c.execute('''SELECT * FROM books WHERE bc LIKE *''')
+        return c.fetchall()
         
