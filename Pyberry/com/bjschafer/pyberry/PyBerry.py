@@ -147,7 +147,7 @@ if __name__ == '__main__':
             
         elif todo == 2:
             todo = input('''We're going to delete a book.  Do you have the barcode? [y/N]: ''')
-            if todo.strip() == "":
+            if todo.strip() == "" or todo.strip().lower() == "n":
                 results = search()
                 i = 1
                 for item in results:
