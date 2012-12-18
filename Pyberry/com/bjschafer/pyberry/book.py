@@ -86,18 +86,61 @@ class Book(object):
             self.tags = myList[10]
             
     def createFromDict(self, myDict):
-        '''Fills in the details of a book from a dict.'''
-        if len(myDict) != 11:
-            raise ValueError("Incorrect dict length")
-        else:
+        '''
+        Fills in the details of a book from a dict.
+        '''
+            
+        try:
             self.bc = myDict["bc"]
+        except:
+            self.bc = 0
+            
+        try:
             self.isbn = myDict["isbn"]
+        except:
+            self.isbn = 0
+        
+        try:
             self.title = myDict["title"]
+        except:
+            self.title = ""
+            
+        try:
             self.author = myDict["author"]
+        except:
+            self.author = ""
+            
+        try:
             self.pages = myDict["pages"]
+        except:
+            self.pages = -1
+            
+        try:
             self.publ_year = myDict["publ_year"]
+        except:
+            self.publ_year = 0
+            
+        try:
             self.publisher = myDict["publisher"]
+        except:
+            self.publisher = ""
+            
+        try:
             self.location = myDict["location"]
+        except:
+            self.location = ""
+            
+        try:
             self.description = myDict["description"]
+        except:
+            self.description = ""
+            
+        try:
             self.call_num = myDict["call_num"]
+        except:
+            self.call_num = ""
+            
+        try:
             self.tags = myDict["tags"]
+        except:
+            self.tags = []

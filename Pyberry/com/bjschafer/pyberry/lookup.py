@@ -39,20 +39,24 @@ class Lookup(object):
             info.append(line)
         returnMe = {}
         for line in info:
+            line = str(line)
             line.split()
             l = line.split('"')[1::2]
-            if l[0] == "title":
-                returnMe["title"] = l[1]
-            elif l[0] == "authors":
-                returnMe["author"] = l[1]
-            elif l[0] == "pageCount":
-                returnMe["pages"] = l[1]
-            elif l[0] == "publishedDate":
-                returnMe["publ_year"] = l[1][0:3]
-            elif l[0] == "publisher":
-                returnMe["publisher"] = l[1]
-            elif l[0] == "description":
-                returnMe["description"] = l[1]
+            try: # this might be a risky approach...
+                if l[0] == "title":
+                    returnMe["title"] = l[1]
+                elif l[0] == "authors":
+                    returnMe["author"] = l[1]
+                elif l[0] == "pageCount":
+                    returnMe["pages"] = l[1]
+                elif l[0] == "publishedDate":
+                    returnMe["publ_year"] = l[1][0:3]
+                elif l[0] == "publisher":
+                    returnMe["publisher"] = l[1]
+                elif l[0] == "description":
+                    returnMe["description"] = l[1]
+            except:
+                pass
         return returnMe
         
     def byISBN(self, isbn):

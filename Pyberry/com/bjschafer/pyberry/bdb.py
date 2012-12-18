@@ -38,8 +38,8 @@ class Bdb(object):
         description TEXT,
         call_num TEXT,
         tags TEXT)''') # not sure how the tags will store.  they're an array and although they
-        #should go in there correctly, there's no telling how they'll come out.  i'll have
-        #to check it out.
+        # should go in there correctly, there's no telling how they'll come out.  i'll have
+        # to check it out.
         self.conn.commit()
         c.close()
                 
@@ -49,8 +49,10 @@ class Bdb(object):
         doesn't serialize it or do anything awful like that.
         '''
         c = self.conn.cursor()
-        for t in book.getListRepresentation(): # not sure if this is the right way to do it.
-            c.execute('''INSERT OR REPLACE INTO books VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',t)
+        t = book.getListRepresentation()
+        t[-1] = str(t[-1])
+        t = tuple(t)
+        c.execute('''INSERT OR REPLACE INTO books VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',t)
         self.conn.commit()
         c.close()
         
@@ -82,15 +84,15 @@ class Bdb(object):
             return -1
         
         else:
-            c = self.conn.cursor
-            c.execute('''SELECT * FROM books WHERE ? LIKE ?''', [field, term])
+            c = self.conn.cursor()
+            c.execute('''SELECT * FROM books WHERE ? LIKE ?''', (field, term))
             return c.fetchall()
         
     def getAll(self):
         '''
         Returns a list of all items in the database.
         '''
-        c = self.conn.cursor
-        c.execute('''SELECT * FROM books WHERE bc LIKE *''')
+        c = self.conn.cursor()
+        c.execute('''SELECT * FROM books''')
         return c.fetchall()
         

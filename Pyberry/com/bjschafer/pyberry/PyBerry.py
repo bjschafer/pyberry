@@ -36,9 +36,10 @@ def search():
     
     if search_field not in terms:
         print("Error, exiting.")
-        break
+        pass
     elif search_term == "":
         print("Error, exiting.")
+        pass
     else:
         if search_field in substitutions:
             search_field = substitutions[search_field]
@@ -66,7 +67,7 @@ if __name__ == '__main__':
             print("Invalid input.")
             pass
         
-        if todo < 1 or todo > 4:
+        if todo < 1 or todo > 6:
             print("Invalid input.")
             pass
         
@@ -119,21 +120,18 @@ if __name__ == '__main__':
                 information["call_num"] = call_num
                 
                 tags = input('''Please enter any tags, separated by a comma: ''')
-                tags.trim()
+                tags = tags.strip()
                 tags = tags.split(',')
                 information["tags"] = tags
                 
                 print('''Ok, everything should be set.  I'll show you what I've got,
                 and if it looks good, just press enter, otherwise type something in
-                and I'll return you to the beginning.''') # I should change how this
-                # does business someday.  It's not elegant and user-friendly as it just
-                # raw prints the dictionary.  Functional, but not elegant.
-                # @TODO: Elegant output here.
+                and I'll return you to the beginning.''') 
                 
                 for item in information:
-                    print(item + ": " + information[item])
-                
-                good = input(information)
+                    print(str(item) + ": " + str(information[item]))
+                    
+                good = input("")
                 
                 if good != "": # not 100% sure this'll work.
                     pass
