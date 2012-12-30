@@ -86,9 +86,15 @@ class Bdb(object):
         
         else:
             term = '%' + term + '%'
-        
+
             c = self.conn.cursor()
-            c.execute('''SELECT * FROM books WHERE ? LIKE ?''', (field, term))
+            
+            # @attention: I know using format for parameters isn't technically
+            # safe or secure.  I did it for two reasons.  Number one, it just
+            # wouldn't work with pysqlite placeholders.  Number two, because
+            # I have it fail above if the field isn't in a predefined list of
+            # fields, it /should/ be okay.
+            c.execute('''SELECT * FROM books WHERE {} LIKE ?'''.format(field),(term,))
             return c.fetchall()
         
     def getAll(self):

@@ -187,7 +187,7 @@ if __name__ == '__main__':
             results = search()
             i = 1
             for item in results:
-                print("i" + item)
+                print(str(i) + ") " + str(item))
                 
         elif todo == 4:
             theDB = Bdb(DB_location)
