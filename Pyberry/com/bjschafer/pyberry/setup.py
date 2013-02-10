@@ -1,8 +1,3 @@
-'''
-Created on Dec 31, 2012
-
-@author: braxton
-'''
 from cx_Freeze import setup, Executable
 
 base = None

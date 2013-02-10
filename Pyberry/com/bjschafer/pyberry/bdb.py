@@ -1,8 +1,3 @@
-'''
-Created on Nov 30, 2012
-
-@author: braxton
-'''
 import sqlite3 as sqlite
 
 class Bdb(object):
