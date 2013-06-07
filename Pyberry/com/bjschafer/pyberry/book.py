@@ -2,26 +2,15 @@ class Book(object):
     '''
     classdocs
     '''
-#    bc = 0
-#    isbn = 0
-#    title = ""
-#    author = ""
-#    pages = 0
-#    publ_year = 0
-#    publisher = ""
-#    location = ""
-#    call_num = ""
-#    tags = []
 
-
-    def __init__(self, bc, isbn=0, title="", author="", pages=0, publ_year=0, publisher="", location="", description="", call_num="", tags=[]):
+    def __init__(self, bc, isbn=0, title="", authors=[], pages=0, publ_year=0, publisher="", location="", description="", call_num="", tags=[]):
         '''
         Constructor
         '''
         self.bc = bc
         self.isbn = isbn
         self.title = title
-        self.author = author
+        self.authors = authors
         self.pages = pages
         self.publ_year = publ_year
         self.publisher = publisher
@@ -30,16 +19,16 @@ class Book(object):
         self.call_num = call_num
         self.tags = tags
         
-    def edit(self, bc=None, isbn=None, title=None, author=None, pages=None, publ_year=None, publisher=None, location=None, description=None, call_num=None, tags=None):
-        '''Edit a receipt.  Specify any parameter.  I love Python.'''
+    def edit(self, bc=None, isbn=None, title=None, authors=None, pages=None, publ_year=None, publisher=None, location=None, description=None, call_num=None, tags=None):
+        '''Edit a book.  Specify any parameter.  I love Python.'''
         if bc != None:
             self.bc = bc
         if isbn != None:
             self.isbn = isbn
         if title != None:
             self.title = title
-        if author != None:
-            self.author = author
+        if authors != None:
+            self.authors = authors
         if pages != None:
             self.pages = pages
         if publ_year != None:
@@ -58,9 +47,8 @@ class Book(object):
     def getListRepresentation(self):
         '''gets a representation of all elements of the book
         in a list, for easy storing in the db.'''
-        retMe = [self.bc, self.isbn, self.title, self.author, self.pages, self.publ_year,
+        return [self.bc, self.isbn, self.title, self.authors, self.pages, self.publ_year,
                 self.publisher, self.location, self.description, self.call_num, self.tags]
-        return retMe
     
     def createFromList(self, myList):
         '''Fills in the details of a book from a list.'''
@@ -70,7 +58,7 @@ class Book(object):
             self.bc = myList[0]
             self.isbn = myList[1]
             self.title = myList[2]
-            self.author = myList[3]
+            self.authors = myList[3]
             self.pages = myList[4]
             self.publ_year = myList[5]
             self.publisher = myList[6]
@@ -100,9 +88,9 @@ class Book(object):
             self.title = ""
             
         try:
-            self.author = myDict["author"]
+            self.authors = myDict["authors"]
         except:
-            self.author = ""
+            self.authors = []
             
         try:
             self.pages = myDict["pages"]

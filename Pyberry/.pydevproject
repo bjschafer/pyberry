@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?eclipse-pydev version="1.0"?><pydev_project>
+<pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">python</pydev_property>
+<pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">python 2.7</pydev_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/Pyberry</path>
 </pydev_pathproperty>
-<pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">python 3.0</pydev_property>
-<pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Py3k</pydev_property>
+<pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
+<path>/Library/Python/2.7/site-packages/gdata</path>
+<path>/Library/Python/2.7/site-packages/google_api_python_client-1.1-py2.7.egg</path>
+</pydev_pathproperty>
 </pydev_project>
