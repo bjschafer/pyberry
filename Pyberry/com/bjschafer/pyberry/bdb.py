@@ -1,5 +1,4 @@
 import sqlite3 as sqlite
-
 class Bdb(object):
     '''
     database for storing the books.  uses python3 builtin module
@@ -17,7 +16,7 @@ class Bdb(object):
         like it at the moment.  it also creates the table/schema
         if it doesn't exist.
         '''
-        self.fields = ["bc", "isbn", "title", "author", "pages", "publ_year",
+        self.fields = ["bc", "isbn", "title", "authors", "pages", "publ_year",
                        "publisher", "location", "description", "call_num", "tags"]
         self.conn = sqlite.connect(location)
         c = self.conn.cursor()
@@ -25,7 +24,7 @@ class Bdb(object):
         (bc INTEGER PRIMARY KEY,
         isbn INTEGER,
         title TEXT,
-        author TEXT,
+        authors TEXT,
         pages INTEGER,
         publ_year INTEGER(4),
         publisher TEXT,
@@ -98,5 +97,4 @@ class Bdb(object):
         '''
         c = self.conn.cursor()
         c.execute('''SELECT * FROM books''')
-        return c.fetchall()
-        
+        return c.fetchall()        
