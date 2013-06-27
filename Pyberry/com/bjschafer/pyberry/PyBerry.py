@@ -322,8 +322,16 @@ if __name__ == '__main__':
             else:
                 newLoc = input(''''Please enter a new path, either relative to current directory\n
                 or an absolute path.  I'll fail if there's a permissions issue, though.\n
-                Current path %s''' % loc) # @todo: input checking
+                Current path %s''' % loc)
                 
+                try:
+                    f = open(newLoc, 'r')
+                except IOError:
+                    print "Sorry, %s won't work.\nI'll return you to the menu." % newLoc
+                    continue
+                finally:
+                    f.close()
+                    
                 config.set('local', 'dbPath', newLoc)
                 with open('.pyberry','wb') as configFile:
                     config.write(configFile)
