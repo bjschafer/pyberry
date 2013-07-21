@@ -1,5 +1,5 @@
 import ConfigParser
-import os.path.isfile
+import os.path
 import random
 from com.bjschafer.pyberry.lookup import Lookup
 from com.bjschafer.pyberry.book import Book
@@ -25,6 +25,7 @@ def readWriteConfig():
             config.write(configFile)
         readWriteConfig() # this should now go and fill in default values, but needs testing
     else:
+        config = ConfigParser.RawConfigParser()
         config.read('.pyberry')
         loc = config.get('local', 'dbPath')
         key = config.get('api', 'apiKey')
@@ -52,10 +53,10 @@ def search():
     
     if search_field not in terms:
         print "Error, exiting."
-        continue
+        return
     elif search_term == "":
         print "Error, exiting."
-        continue
+        return
     else:
         if search_field in substitutions:
             search_field = substitutions[search_field]
@@ -205,7 +206,7 @@ if __name__ == '__main__':
                     bookDB.store(addBook)
                     
             elif addOption == 3:
-                title = input("Please enter the title you'd like to search for:")
+                title = raw_input("Please enter the title you'd like to search for:")
                 lookup = Lookup()
                 books = lookup.byTitle(title)
                 count = 1

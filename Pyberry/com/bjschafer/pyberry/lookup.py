@@ -75,6 +75,7 @@ class Lookup(object):
         '''
         searches Google Books via title.  Potentially lots of info here.
         '''
+        title = title.replace(' ', '%20')
         service = build('books', 'v1', developerKey = self.apiKey)
         request = service.volumes().list(source='public', q='title:'+title)
         self.response = request.execute()

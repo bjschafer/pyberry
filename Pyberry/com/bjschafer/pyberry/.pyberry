@@ -1,0 +1,6 @@
+[local]
+dbpath = .pyberry.sqlite
+
+[api]
+apikey = 
+
