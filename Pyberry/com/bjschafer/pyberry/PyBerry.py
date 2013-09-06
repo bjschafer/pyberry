@@ -219,9 +219,17 @@ if __name__ == '__main__':
                                                           book['volumeInfo']['authors'])
                     count += 1
                 userChoice = input("Which result would you like? ")
+                
+                try:
+                    userChoice = int(userChoice)
+                except:
+                    print "Invalid input."
+                    continue
+                userChoice = userChoice - 1 # need to compensate for off-by-one.
+                
                 bookInfo = lookup.chooseResponse(books[userChoice]['id'])
                 
-                bc = ('''Please enter a unique barcode, or -1 to autogenerate: ''')
+                bc = input('''Please enter a unique barcode, or -1 to autogenerate: ''')
                 
                 try:
                     bc = int(bc)
