@@ -36,7 +36,7 @@ def randomBC():
     This probably isn't elegant, but it should give random numbers
     that are rather not likely to collide.
     '''
-    gen = random()
+    gen = random.Random()
     temp = gen.randrange(100000,999999)
     return abs(temp+gen.randrange(100000,999999))
 
@@ -48,8 +48,8 @@ def search():
     print "Welcome to searching!"
     print '''You can search by: title, author, barcode, isbn, number of pages, publication year,
     location, description, call number, or tags.'''
-    search_field = input("Which would you like to search by? ")
-    search_term = input("OK, go ahead: ")
+    search_field = raw_input("Which would you like to search by? ")
+    search_term = raw_input("OK, go ahead: ")
     
     if search_field not in terms:
         print "Error, exiting."
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     print "Welcome to PyBerry!"
     
     while run:
-        todo = input('''What would you like to do?  Your choices are:\n
+        todo = raw_input('''What would you like to do?  Your choices are:\n
         1) Add a book\n
         2) Delete a book\n
         3) Search for a book\n
@@ -135,7 +135,7 @@ if __name__ == '__main__':
             continue
         
         if todo == 1:
-            addOption = input('''Let's add a book.  How would you like to add it?\n
+            addOption = raw_input('''Let's add a book.  How would you like to add it?\n
             1) Manually\n
             2) Search by ISBN\n
             3) Search by Title: ''')
@@ -149,7 +149,7 @@ if __name__ == '__main__':
             if addOption == 1:
                 manualAdd = {}
                 for item in terms:
-                    manualAdd[item] = input("Please enter the" + item)
+                    manualAdd[item] = raw_input("Please enter the" + item)
                     
                 for item in manualAdd:
                     if item in substitutions:
@@ -161,7 +161,7 @@ if __name__ == '__main__':
                 bookDB.store(manualBook)
                 
             elif addOption == 2:
-                isbn = input("Please enter the 10 or 13 digit ISBN: ")
+                isbn = raw_input("Please enter the 10 or 13 digit ISBN: ")
                 lookup = Lookup()
                 bookInfo = lookup.byISBN(isbn)
                 bc = ('''Please enter a unique barcode, or -1 to autogenerate: ''')
@@ -177,13 +177,13 @@ if __name__ == '__main__':
                 else:
                     bookInfo["bc"] = bc
                 
-                location = input('''Please enter the location of the book, default blank: ''')
+                location = raw_input('''Please enter the location of the book, default blank: ''')
                 bookInfo["location"] = location
                 
-                call_num = input('''Please enter the call number of the book: ''')
+                call_num = raw_input('''Please enter the call number of the book: ''')
                 bookInfo["call_num"] = call_num
                 
-                tags = input('''Please enter any tags, separated by a comma: ''')
+                tags = raw_input('''Please enter any tags, separated by a comma: ''')
                 tags = tags.strip()
                 tags = tags.split(',')
                 bookInfo["tags"] = tags
@@ -195,7 +195,7 @@ if __name__ == '__main__':
                 for item in bookInfo:
                     print str(item) + ": " + str(bookInfo[item])
                     
-                isOk = input("")
+                isOk = raw_input("")
                 
                 if isOk != "": # not 100% sure this will work
                     continue
@@ -212,16 +212,24 @@ if __name__ == '__main__':
                 count = 1
                 raw_input('''The following are the results.  Please enter the number of the\n
                 result you'd like.  Press any key to display them.''')
-                for book in books.get('items', []):
+                for book in books:
                     print '%i) Title: %s, Authors: %s' % (
                                                           count,
                                                           book['volumeInfo']['title'],
-                                                          book['volumeInfo']['authors'])
+                                                          str(book['volumeInfo']['authors']).strip('[]'))
                     count += 1
-                userChoice = input("Which result would you like? ")
+                userChoice = raw_input("Which result would you like? ")
+                
+                try:
+                    userChoice = int(userChoice)
+                except:
+                    print "Invalid input."
+                    continue
+                userChoice = userChoice - 1 # need to compensate for off-by-one.
+                
                 bookInfo = lookup.chooseResponse(books[userChoice]['id'])
                 
-                bc = ('''Please enter a unique barcode, or -1 to autogenerate: ''')
+                bc = raw_input('''Please enter a unique barcode, or -1 to autogenerate: ''')
                 
                 try:
                     bc = int(bc)
@@ -234,16 +242,23 @@ if __name__ == '__main__':
                 else:
                     bookInfo["bc"] = bc
                 
-                location = input('''Please enter the location of the book, default blank: ''')
+                location = raw_input('''Please enter the location of the book, default blank: ''')
                 bookInfo["location"] = location
                 
-                call_num = input('''Please enter the call number of the book: ''')
+                call_num = raw_input('''Please enter the call number of the book: ''')
                 bookInfo["call_num"] = call_num
                 
-                tags = input('''Please enter any tags, separated by a comma: ''')
+                tags = raw_input('''Please enter any tags, separated by a comma: ''')
                 tags = tags.strip()
                 tags = tags.split(',')
                 bookInfo["tags"] = tags
+                
+                for key, value in bookInfo.iteritems():
+                    try:
+                        value = value.encode('ascii','ignore')
+                    except AttributeError:
+                        pass
+                    bookInfo[key] = value
             
                 print '''Ok, everything should be set.  I'll show you what I've got,
                 and if it looks good, just press enter, otherwise type something in
@@ -252,7 +267,7 @@ if __name__ == '__main__':
                 for item in bookInfo:
                     print str(item) + ": " + str(bookInfo[item])
                     
-                isOk = input("")
+                isOk = raw_input("")
                 
                 if isOk != "": # not 100% sure this will work
                     continue
@@ -263,13 +278,13 @@ if __name__ == '__main__':
                     bookDB.store(addBook)
                 
         elif todo == 2:
-            todo = input('''We're going to delete a book.  Do you have the barcode? [y/N]: ''')
+            todo = raw_input('''We're going to delete a book.  Do you have the barcode? [y/N]: ''')
             if todo.strip() == "" or todo.strip().lower() == "n":
                 results = search()
                 i = 1
                 for item in results:
                     print(i + ") " + item) # not sure how this will come out.
-                delMe = input("Which one is it? ")
+                delMe = raw_input("Which one is it? ")
                 
                 try:
                     delMe = int(delMe)
@@ -285,7 +300,7 @@ if __name__ == '__main__':
                 print "Deleted."
                 
             elif todo.strip().lower() == "y":
-                delMe = input("Ok, enter it now: ")
+                delMe = raw_input("Ok, enter it now: ")
                 if delMe.strip() == "":
                     print "Invalid input."
                 else:
@@ -316,12 +331,12 @@ if __name__ == '__main__':
             config.read('.pyberry')
             loc = config.get('local', 'dbPath')
             print "Current location is %s" % loc
-            changeIt = input("Would you like to change it? [y/N]: ")
+            changeIt = raw_input("Would you like to change it? [y/N]: ")
             
             if changeIt.strip().lower() != 'y':
                 continue
             else:
-                newLoc = input(''''Please enter a new path, either relative to current directory\n
+                newLoc = raw_input(''''Please enter a new path, either relative to current directory\n
                 or an absolute path.  I'll fail if there's a permissions issue, though.\n
                 Current path %s''' % loc)
                 

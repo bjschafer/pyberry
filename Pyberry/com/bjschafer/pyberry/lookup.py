@@ -23,15 +23,14 @@ class Lookup(object):
     def _createDict(self, response):
         bookDict = {}
         bookDict['title'] = response['volumeInfo']['title']
-        authors = response['volumeInfo']['authors']
-        authors = authors.strip()
-        authors = authors.split(',')
-        # verify we don't get square brackets
-        bookDict['authors'] = authors
-        bookDict['pages'] = response['pageCount']
-        bookDict['publ_year'] = response['publishedDate'][0:4] # not quite sure if this will just get us the year
-        bookDict['publisher'] = response['publisher']
-        bookDict['description'] = response['description']
+        bookDict['authors'] = ', '.join(self._removeUnicode(response['volumeInfo']['authors']))
+        try:
+            bookDict['pages'] = response['volumeInfo']['pageCount']
+        except KeyError:
+            bookDict['pages'] = 0
+        bookDict['publ_year'] = response['volumeInfo']['publishedDate'][0:4] # not quite sure if this will just get us the year
+        bookDict['publisher'] = response['volumeInfo']['publisher']
+        bookDict['description'] = response['volumeInfo']['description']
         
         return bookDict
     
@@ -75,9 +74,20 @@ class Lookup(object):
         '''
         searches Google Books via title.  Potentially lots of info here.
         '''
-        title = title.replace(' ', '%20')
+        title = title.replace(' ', '%20') # replace spaces for putting into the URI.
         service = build('books', 'v1', developerKey = self.apiKey)
-        request = service.volumes().list(source='public', q='title:'+title)
+        request = service.volumes().list(source='public', q=title) # not sure if this will return matches not in title
         self.response = request.execute()
-        
+                
         return self.response['items']
+    
+    def _removeUnicode(self, uniList):
+        '''
+        @param list: A list to loop through and encode all unicode to ascii.
+        @return: The same list with all unicode removed and replaced by ascii
+        Removes unicode strings from a list.
+        '''
+        newList = []
+        for item in uniList:
+            newList.append(item.encode('ascii'))
+        return newList

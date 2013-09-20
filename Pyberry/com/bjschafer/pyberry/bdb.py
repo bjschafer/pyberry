@@ -1,4 +1,5 @@
 import sqlite3 as sqlite
+
 class Bdb(object):
     '''
     database for storing the books.  uses python3 builtin module
@@ -19,6 +20,7 @@ class Bdb(object):
         self.fields = ["bc", "isbn", "title", "authors", "pages", "publ_year",
                        "publisher", "location", "description", "call_num", "tags"]
         self.conn = sqlite.connect(location)
+        self.conn.text_factory = str
         c = self.conn.cursor()
         c.execute('''CREATE TABLE IF NOT EXISTS books
         (bc INTEGER PRIMARY KEY,
