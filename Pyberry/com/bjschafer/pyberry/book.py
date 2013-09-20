@@ -126,3 +126,19 @@ class Book(object):
             self.tags = myDict["tags"]
         except:
             self.tags = []
+            
+    def removeUnicode(self):
+        '''
+        Removes the unicode (converts it to ascii) from each element of a book.
+        Thus, eliminates the obnoxious u'.
+        Probably should come up with a better way to deal with unicode someday.
+        '''
+        
+        self.title = self.title.encode('ascii')
+        self.authors = self.authors.encode('ascii')
+        self.publisher = self.publisher.encode('ascii')
+        self.location = self.location.encode('ascii')
+        self.description = self.description.encode('ascii')
+        self.call_num = self.call_num.encode('ascii')
+        
+        
