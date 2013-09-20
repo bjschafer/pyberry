@@ -23,7 +23,7 @@ class Lookup(object):
     def _createDict(self, response):
         bookDict = {}
         bookDict['title'] = response['volumeInfo']['title']
-        bookDict['authors'] = ', '.split(response['volumeInfo']['authors'])
+        bookDict['authors'] = ', '.join(self._removeUnicode(response['volumeInfo']['authors']))
         try:
             bookDict['pages'] = response['volumeInfo']['pageCount']
         except KeyError:
@@ -80,3 +80,14 @@ class Lookup(object):
         self.response = request.execute()
                 
         return self.response['items']
+    
+    def _removeUnicode(self, uniList):
+        '''
+        @param list: A list to loop through and encode all unicode to ascii.
+        @return: The same list with all unicode removed and replaced by ascii
+        Removes unicode strings from a list.
+        '''
+        newList = []
+        for item in uniList:
+            newList.append(item.encode('ascii'))
+        return newList
