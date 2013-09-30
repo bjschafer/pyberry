@@ -82,14 +82,19 @@ def edit(editBook):
     for key,value in newBook.iteritems():
         if value == '':
             newBook[key] = None
-            
+    
+    oldBC = editBook.bc
     editBook.edit(newBook['barcode'], newBook['isbn'], newBook['title'], newBook['authors'], 
                   newBook['pages'], newBook['publ_year'], newBook['publisher'], 
                   newBook['location'], newBook['description'], newBook['call_num'],
                   newBook['tags'])
     
     theDB = Bdb(dbLocation)
-    theDB.store(editBook)
+    if editBook.bc == None:
+        theDB.store(editBook)
+    else:
+        theDB.delete(Book(oldBC))
+        theDB.store(editBook)
         
 def printLogo():
     print '''
@@ -320,8 +325,7 @@ def editBook():
         editChoice = createBookFromList(editChoice)
         
         edit(editChoice)
-        
-                    
+                          
 def searchBook():
     results = search()
     i = 1

@@ -58,7 +58,7 @@ class Bdb(object):
         Deletes a book in the database.  This will require
         some testing to ensure I've gotten it right.
         '''
-
+        
         c = self.conn.cursor()
         c.execute('''DELETE FROM books WHERE bc=?''', (book.bc,))
         self.conn.commit()
