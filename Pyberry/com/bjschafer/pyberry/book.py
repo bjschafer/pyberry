@@ -81,4 +81,6 @@ class Book(object):
         self.description = self.description.encode('ascii')
         self.call_num = self.call_num.encode('ascii')
         
+    def __str__(self):
+        return self.title + " by: " + self.authors
         
