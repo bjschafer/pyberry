@@ -68,7 +68,7 @@ class Bdb(object):
         retrieves a book given the barcode/unique id.
         '''
         c = self.conn.cursor()
-        c.execute('''SELECT * FROM books WHERE bc=?''', bc)
+        c.execute('''SELECT * FROM books WHERE bc=?''', (bc,))
         return c.fetchone()
     
     def search(self, field, term):

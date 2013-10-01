@@ -304,7 +304,6 @@ def deleteBook():
             print "Invalid input."
         else:
             delMe = int(delMe)
-            
             delMe = Book(delMe)
             theDB = Bdb(dbLocation)
             theDB.delete(delMe)
@@ -323,8 +322,18 @@ def editBook():
         editChoice = results[editChoice - 1]
         editChoice = list(editChoice)
         editChoice = createBookFromList(editChoice)
-        
         edit(editChoice)
+        
+    elif todo.strip().lower() == "y":
+        editChoice = raw_input("Ok, enter it now: ")
+        if editChoice.strip() == "":
+            print "Invalid input."
+        else:
+            editChoice = int(editChoice)
+            theDb = Bdb(dbLocation)
+            editChoice = theDb.retrieve(editChoice)
+            editChoice = createBookFromList(editChoice) # might not need this?
+            edit(editChoice)      
                           
 def searchBook():
     results = search()
