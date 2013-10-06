@@ -7,8 +7,8 @@ from com.bjschafer.pyberry.bdb import Bdb
 
 #TODO: change settings in program.
 
-terms = ["title", "author", "barcode", "isbn", "number of pages", "publication year",
-         "location", "description", "call number", "tags"]
+terms = ["title", "authors", "barcode", "isbn", "number of pages", "publication year",
+         "publisher", "location", "description", "call number", "tags"]
 substitutions = {"barcode": "bc", "number of pages": "pages", "publication year": "publ_year",
                  "call number": "call_num"}
 
@@ -46,7 +46,7 @@ def search():
     It returns a list of search results.
     '''
     print "Welcome to searching!"
-    print '''You can search by: title, author, barcode, isbn, number of pages, publication year,
+    print '''You can search by: title, authors, barcode, isbn, number of pages, publication year,
     location, description, call number, or tags.'''
     search_field = raw_input("Which would you like to search by? ")
     search_term = raw_input("OK, go ahead: ")
@@ -62,12 +62,43 @@ def search():
             search_field = substitutions[search_field]
         theDB = Bdb(dbLocation)
         return theDB.search(search_field, search_term)
+  
+def edit(editBook):
+    print ''''I'm going to show you each element of the book.  If you don't want
+              to change it, just press enter.  Otherwise, enter a new value.
+              For multiple authors and tags, separate them by a comma.
+              e.g. author1,author2,author3'''
+    newBook = {}
+    newBook['barcode'] = raw_input("Barcode: " + str(editBook.bc))
+    newBook['isbn'] = raw_input("ISBN: " + str(editBook.isbn))
+    newBook['title'] = raw_input("Title: " + str(editBook.title)) # doesn't pull info for anything below.
+    newBook['authors'] = raw_input("Authors: " + str(editBook.authors))
+    newBook['pages'] = raw_input("Number of Pages: " + str(editBook.pages))
+    newBook['publ_year'] = raw_input("Publication Year: " + str(editBook.publ_year))
+    newBook['publisher'] = raw_input("Publisher: " + str(editBook.publisher))
+    newBook['location'] = raw_input("Location: " + str(editBook.location))
+    newBook['description'] = raw_input("Description: " + str(editBook.description))
+    newBook['call_num'] = raw_input("Call number: " + str(editBook.call_num))
+    newBook['tags'] = raw_input("Tags: " + str(editBook.tags))
     
-if __name__ == '__main__':
-    dbLocation, apiKey = readWriteConfig() #verify syntax of this
+    for key,value in newBook.iteritems():
+        if value == '':
+            newBook[key] = None
     
-    run = True
-    # logo
+    oldBC = editBook.bc # we need this to ensure we don't create a duplicate db entry
+    editBook.edit(newBook['barcode'], newBook['isbn'], newBook['title'], newBook['authors'], 
+                  newBook['pages'], newBook['publ_year'], newBook['publisher'], 
+                  newBook['location'], newBook['description'], newBook['call_num'],
+                  newBook['tags'])
+    
+    theDB = Bdb(dbLocation)
+    if editBook.bc == None:
+        theDB.store(editBook)
+    else:
+        theDB.delete(Book(oldBC))
+        theDB.store(editBook)
+        
+def printLogo():
     print '''
                                    ,...... 77                                   
                               7,..............7                                 
@@ -112,6 +143,245 @@ if __name__ == '__main__':
   77                           ...............                                  
                                   ..........I                                   
                                  77777777I??7     '''
+
+def createBookFromDict(book_dict):
+    book = Book(book_dict["bc"], book_dict["isbn"], book_dict["title"], book_dict["authors"],
+                book_dict["pages"], book_dict["publ_year"], book_dict["publisher"], book_dict["location"], 
+                book_dict["description"], book_dict["call_num"], book_dict["tags"])
+    return book
+
+def createBookFromList(book_list): # PROTIP:  also works for tuples
+    book = Book(book_list[0], book_list[1], book_list[2], book_list[3], book_list[4], book_list[5], book_list[6], 
+                book_list[7], book_list[8], book_list[9], book_list[10])
+    return book
+
+def addBook():
+    addOption = raw_input('''Let's add a book.  How would you like to add it?\n
+    1) Manually\n
+    2) Search by ISBN\n
+    3) Search by Title: ''')
+    
+    addOption = int(addOption)
+    
+    if addOption == 1:
+        manualAdd = {}
+        print "If you have multiple authors or tags, please separate them with a comma."
+        print "e.g. author1,author2,author3"
+        for item in terms:
+            manualAdd[item] = raw_input("Please enter the " + item + ": ")
+            
+        for item in manualAdd:
+            if item in substitutions:
+                manualAdd[substitutions[item]] = manualAdd.pop(item)
+        
+        manualBook = createBookFromDict(manualAdd)
+        bookDB = Bdb(dbLocation)
+        bookDB.store(manualBook)
+        
+    elif addOption == 2:
+        isbn = raw_input("Please enter the 10 or 13 digit ISBN: ")
+        lookup = Lookup()
+        bookInfo = lookup.byISBN(isbn)
+        bc = ('''Please enter a unique barcode, or -1 to autogenerate: ''')
+        
+        bc = int(bc)
+        
+        if bc == -1:
+            bookInfo["bc"] = randomBC()
+        else:
+            bookInfo["bc"] = bc
+        
+        location = raw_input('''Please enter the location of the book, default blank: ''')
+        bookInfo["location"] = location
+        
+        call_num = raw_input('''Please enter the call number of the book: ''')
+        bookInfo["call_num"] = call_num
+        
+        tags = raw_input('''Please enter any tags, separated by a comma: ''')
+        tags = tags.strip()
+        bookInfo["tags"] = tags
+    
+        print '''Ok, everything should be set.  I'll show you what I've got,
+        and if it looks good, just press enter, otherwise type something in
+        and I'll return you to the beginning.'''
+        
+        for item in bookInfo:
+            print str(item) + ": " + str(bookInfo[item])
+            
+        isOk = raw_input("")
+        
+        if isOk != "": # not 100% sure this will work
+            raise ValueError
+        else:
+            addBook = createBookFromDict(bookInfo)
+            bookDB = Bdb(dbLocation)
+            bookDB.store(addBook)
+            
+    elif addOption == 3:
+        title = raw_input("Please enter the title you'd like to search for:")
+        lookup = Lookup()
+        books = lookup.byTitle(title)
+        count = 1
+        raw_input('''The following are the results.  Please enter the number of the\n
+        result you'd like.  Press any key to display them.''')
+        for book in books:
+            print '%i) Title: %s, Authors: %s' % (
+                                                  count,
+                                                  book['volumeInfo']['title'],
+                                                  str(book['volumeInfo']['authors']).strip('[]'))
+            count += 1
+        userChoice = raw_input("Which result would you like? ")
+        
+        userChoice = int(userChoice)
+
+        userChoice = userChoice - 1 # need to compensate for off-by-one.
+        
+        bookInfo = lookup.chooseResponse(books[userChoice]['id'])
+        
+        bc = raw_input('''Please enter a unique barcode, or -1 to autogenerate: ''')
+        
+        bc = int(bc)
+        
+        if bc == -1:
+            bookInfo["bc"] = randomBC()
+        else:
+            bookInfo["bc"] = bc
+        
+        location = raw_input('''Please enter the location of the book, default blank: ''')
+        bookInfo["location"] = location
+        
+        call_num = raw_input('''Please enter the call number of the book: ''')
+        bookInfo["call_num"] = call_num
+        
+        tags = raw_input('''Please enter any tags, separated by a comma: ''')
+        tags = tags.strip()
+        bookInfo["tags"] = tags
+        
+        for key, value in bookInfo.iteritems():
+            try:
+                value = value.encode('ascii','ignore')
+            except AttributeError:
+                pass
+            bookInfo[key] = value
+    
+        if not 'isbn' in bookInfo:
+            bookInfo['isbn'] = 0
+        print '''Ok, everything should be set.  I'll show you what I've got,
+        and if it looks good, just press enter, otherwise type something in
+        and I'll return you to the beginning.'''
+        
+        for item in bookInfo:
+            print str(item) + ": " + str(bookInfo[item])
+            
+        isOk = raw_input("")
+        
+        if isOk != "": # not 100% sure this will work
+            raise ValueError
+        else:
+            addBook = createBookFromDict(bookInfo)
+            bookDB = Bdb(dbLocation)
+            bookDB.store(addBook)
+
+def deleteBook():
+    todo = raw_input('''We're going to delete a book.  Do you have the barcode? [y/N]: ''')
+    if todo.strip() == "" or todo.strip().lower() == "n":
+        results = search()
+        i = 1
+        for item in results:
+            print(i + ") " + item) # not sure how this will come out.
+        delMe = raw_input("Which one is it? ")
+        
+        delMe = int(delMe)
+        
+        delMe = results[delMe - 1]
+        delMe = delMe.split(",")
+        delMe = Book(delMe[0]) # this is really fudged atm.  serious testing needed
+        theDB = Bdb(dbLocation)
+        theDB.delete(delMe)
+        print "Deleted."
+        
+    elif todo.strip().lower() == "y":
+        delMe = raw_input("Ok, enter it now: ")
+        if delMe.strip() == "":
+            print "Invalid input."
+        else:
+            delMe = int(delMe)
+            delMe = Book(delMe)
+            theDB = Bdb(dbLocation)
+            theDB.delete(delMe)
+            print "Deleted."
+    
+def editBook():
+    todo = raw_input("We're going to edit a book.  Do you have the barcode? [y/N]: ")
+    if todo.strip() == "" or todo.strip().lower() == "n":
+        results = search()
+        i = 1
+        for item in results:
+            print (str(i) + ") " + str(item)) # not sure how this will come out, same as above.
+        editChoice = raw_input("Which one is it? ")
+        
+        editChoice = int(editChoice)
+        editChoice = results[editChoice - 1]
+        editChoice = list(editChoice)
+        editChoice = createBookFromList(editChoice)
+        edit(editChoice)
+        
+    elif todo.strip().lower() == "y":
+        editChoice = raw_input("Ok, enter it now: ")
+        if editChoice.strip() == "":
+            print "Invalid input."
+        else:
+            editChoice = int(editChoice)
+            theDb = Bdb(dbLocation)
+            editChoice = theDb.retrieve(editChoice)
+            editChoice = createBookFromList(editChoice) # might not need this?
+            edit(editChoice)      
+                          
+def searchBook():
+    results = search()
+    i = 1
+    for item in results:
+        print str(i) + ") " + str(item)
+                  
+def showAllBooks():
+    theDB = Bdb(dbLocation)
+    for item in theDB.getAll():
+        print item
+        
+def changeDBLocation():
+    config = ConfigParser.RawConfigParser()
+    config.read('.pyberry')
+    loc = config.get('local', 'dbPath')
+    print "Current location is %s" % loc
+    changeIt = raw_input("Would you like to change it? [y/N]: ")
+    
+    if changeIt.strip().lower() != 'y':
+        return 1
+    else:
+        newLoc = raw_input(''''Please enter a new path, either relative to current directory\n
+        or an absolute path.  I'll fail if there's a permissions issue, though.\n
+        Current path %s''' % loc)
+        
+        try:
+            f = open(newLoc, 'r')
+        except IOError:
+            print "Sorry, %s won't work.\nI'll return you to the menu." % newLoc
+            return 1
+        finally:
+            f.close()
+            
+        config.set('local', 'dbPath', newLoc)
+        with open('.pyberry','wb') as configFile:
+            config.write(configFile)
+        return 0
+
+
+if __name__ == '__main__':
+    dbLocation, apiKey = readWriteConfig() #verify syntax of this
+    
+    run = True
+    
+    printLogo()
     
     print "Welcome to PyBerry!"
     
@@ -119,10 +389,11 @@ if __name__ == '__main__':
         todo = raw_input('''What would you like to do?  Your choices are:\n
         1) Add a book\n
         2) Delete a book\n
-        3) Search for a book\n
-        4) Show all books\n
-        5) Change database location\n
-        6) Exit: ''')
+        3) Edit a book\n
+        4) Search for a book\n
+        5) Show all books\n
+        6) Change database location\n
+        7) Exit: ''')
         
         try:
             todo = int(todo)
@@ -130,229 +401,38 @@ if __name__ == '__main__':
             print "Invalid input."
             continue
         
-        if todo < 1 or todo > 6:
+        if todo < 1 or todo > 7:
             print "Invalid input."
             continue
         
         if todo == 1:
-            addOption = raw_input('''Let's add a book.  How would you like to add it?\n
-            1) Manually\n
-            2) Search by ISBN\n
-            3) Search by Title: ''')
-            
             try:
-                addOption = int(addOption)
-            except:
+                addBook()
+            except TypeError:
                 print "Invalid input."
                 continue
-            
-            if addOption == 1:
-                manualAdd = {}
-                for item in terms:
-                    manualAdd[item] = raw_input("Please enter the" + item)
-                    
-                for item in manualAdd:
-                    if item in substitutions:
-                        manualAdd[substitutions[item]] = manualAdd.pop(item)
-                
-                manualBook = Book(manualAdd["bc"])
-                manualBook.createFromDict(manualAdd)
-                bookDB = Bdb(dbLocation)
-                bookDB.store(manualBook)
-                
-            elif addOption == 2:
-                isbn = raw_input("Please enter the 10 or 13 digit ISBN: ")
-                lookup = Lookup()
-                bookInfo = lookup.byISBN(isbn)
-                bc = ('''Please enter a unique barcode, or -1 to autogenerate: ''')
-                
-                try:
-                    bc = int(bc)
-                except:
-                    print "Invalid input."
-                    continue
-                
-                if bc == -1:
-                    bookInfo["bc"] = randomBC()
-                else:
-                    bookInfo["bc"] = bc
-                
-                location = raw_input('''Please enter the location of the book, default blank: ''')
-                bookInfo["location"] = location
-                
-                call_num = raw_input('''Please enter the call number of the book: ''')
-                bookInfo["call_num"] = call_num
-                
-                tags = raw_input('''Please enter any tags, separated by a comma: ''')
-                tags = tags.strip()
-                tags = tags.split(',')
-                bookInfo["tags"] = tags
-            
-                print '''Ok, everything should be set.  I'll show you what I've got,
-                and if it looks good, just press enter, otherwise type something in
-                and I'll return you to the beginning.'''
-                
-                for item in bookInfo:
-                    print str(item) + ": " + str(bookInfo[item])
-                    
-                isOk = raw_input("")
-                
-                if isOk != "": # not 100% sure this will work
-                    continue
-                else:
-                    addBook = Book(bookInfo["bc"])
-                    addBook.createFromDict(bookInfo)
-                    bookDB = Bdb(dbLocation)
-                    bookDB.store(addBook)
-                    
-            elif addOption == 3:
-                title = raw_input("Please enter the title you'd like to search for:")
-                lookup = Lookup()
-                books = lookup.byTitle(title)
-                count = 1
-                raw_input('''The following are the results.  Please enter the number of the\n
-                result you'd like.  Press any key to display them.''')
-                for book in books:
-                    print '%i) Title: %s, Authors: %s' % (
-                                                          count,
-                                                          book['volumeInfo']['title'],
-                                                          str(book['volumeInfo']['authors']).strip('[]'))
-                    count += 1
-                userChoice = raw_input("Which result would you like? ")
-                
-                try:
-                    userChoice = int(userChoice)
-                except:
-                    print "Invalid input."
-                    continue
-                userChoice = userChoice - 1 # need to compensate for off-by-one.
-                
-                bookInfo = lookup.chooseResponse(books[userChoice]['id'])
-                
-                bc = raw_input('''Please enter a unique barcode, or -1 to autogenerate: ''')
-                
-                try:
-                    bc = int(bc)
-                except:
-                    print "Invalid input."
-                    continue
-                
-                if bc == -1:
-                    bookInfo["bc"] = randomBC()
-                else:
-                    bookInfo["bc"] = bc
-                
-                location = raw_input('''Please enter the location of the book, default blank: ''')
-                bookInfo["location"] = location
-                
-                call_num = raw_input('''Please enter the call number of the book: ''')
-                bookInfo["call_num"] = call_num
-                
-                tags = raw_input('''Please enter any tags, separated by a comma: ''')
-                tags = tags.strip()
-                tags = tags.split(',')
-                bookInfo["tags"] = tags
-                
-                for key, value in bookInfo.iteritems():
-                    try:
-                        value = value.encode('ascii','ignore')
-                    except AttributeError:
-                        pass
-                    bookInfo[key] = value
-            
-                print '''Ok, everything should be set.  I'll show you what I've got,
-                and if it looks good, just press enter, otherwise type something in
-                and I'll return you to the beginning.'''
-                
-                for item in bookInfo:
-                    print str(item) + ": " + str(bookInfo[item])
-                    
-                isOk = raw_input("")
-                
-                if isOk != "": # not 100% sure this will work
-                    continue
-                else:
-                    addBook = Book(bookInfo["bc"])
-                    addBook.createFromDict(bookInfo)
-                    bookDB = Bdb(dbLocation)
-                    bookDB.store(addBook)
+            except ValueError: # They do the same thing, but for future's sake...
+                print "Invalid input."
+                continue
                 
         elif todo == 2:
-            todo = raw_input('''We're going to delete a book.  Do you have the barcode? [y/N]: ''')
-            if todo.strip() == "" or todo.strip().lower() == "n":
-                results = search()
-                i = 1
-                for item in results:
-                    print(i + ") " + item) # not sure how this will come out.
-                delMe = raw_input("Which one is it? ")
-                
-                try:
-                    delMe = int(delMe)
-                except:
-                    print "Invalid input."
-                    continue
-                
-                delMe = results[delMe - 1]
-                delMe = delMe.split(",")
-                delMe = Book(delMe[0]) # this is really fudged atm.  serious testing needed
-                theDB = Bdb(dbLocation)
-                theDB.delete(delMe)
-                print "Deleted."
-                
-            elif todo.strip().lower() == "y":
-                delMe = raw_input("Ok, enter it now: ")
-                if delMe.strip() == "":
-                    print "Invalid input."
-                else:
-                    try:
-                        delMe = int(delMe)
-                    except:
-                        print "Invalid input."
-                        continue
-                    
-                    delMe = Book(delMe)
-                    theDB = Bdb(dbLocation)
-                    theDB.delete(delMe)
-                    print "Deleted."
+            deleteBook()
                     
         elif todo == 3:
-            results = search()
-            i = 1
-            for item in results:
-                print str(i) + ") " + str(item)
-                
+            editBook()
+            
         elif todo == 4:
-            theDB = Bdb(dbLocation)
-            for item in theDB.getAll():
-                print item
+            searchBook()
                 
         elif todo == 5:
-            config = ConfigParser.RawConfigParser()
-            config.read('.pyberry')
-            loc = config.get('local', 'dbPath')
-            print "Current location is %s" % loc
-            changeIt = raw_input("Would you like to change it? [y/N]: ")
-            
-            if changeIt.strip().lower() != 'y':
-                continue
-            else:
-                newLoc = raw_input(''''Please enter a new path, either relative to current directory\n
-                or an absolute path.  I'll fail if there's a permissions issue, though.\n
-                Current path %s''' % loc)
+            showAllBooks()
                 
-                try:
-                    f = open(newLoc, 'r')
-                except IOError:
-                    print "Sorry, %s won't work.\nI'll return you to the menu." % newLoc
-                    continue
-                finally:
-                    f.close()
-                    
-                config.set('local', 'dbPath', newLoc)
-                with open('.pyberry','wb') as configFile:
-                    config.write(configFile)
-                    
         elif todo == 6:
+            exitStatus = changeDBLocation()
+            if exitStatus == 0:
+                print "Changed successfully."
+                    
+        elif todo == 7:
             run = False
         
         else:

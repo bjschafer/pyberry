@@ -67,66 +67,6 @@ class Book(object):
             self.call_num = myList[9]
             self.tags = myList[10]
             
-    def createFromDict(self, myDict):
-        '''
-        Fills in the details of a book from a dict.
-        '''
-            
-        try:
-            self.bc = myDict["bc"]
-        except:
-            self.bc = 0
-            
-        try:
-            self.isbn = myDict["isbn"]
-        except:
-            self.isbn = 0
-        
-        try:
-            self.title = myDict["title"]
-        except:
-            self.title = ""
-            
-        try:
-            self.authors = myDict["authors"]
-        except:
-            self.authors = []
-            
-        try:
-            self.pages = myDict["pages"]
-        except:
-            self.pages = -1
-            
-        try:
-            self.publ_year = myDict["publ_year"]
-        except:
-            self.publ_year = 0
-            
-        try:
-            self.publisher = myDict["publisher"]
-        except:
-            self.publisher = ""
-            
-        try:
-            self.location = myDict["location"]
-        except:
-            self.location = ""
-            
-        try:
-            self.description = myDict["description"]
-        except:
-            self.description = ""
-            
-        try:
-            self.call_num = myDict["call_num"]
-        except:
-            self.call_num = ""
-            
-        try:
-            self.tags = myDict["tags"]
-        except:
-            self.tags = []
-            
     def removeUnicode(self):
         '''
         Removes the unicode (converts it to ascii) from each element of a book.
@@ -135,10 +75,16 @@ class Book(object):
         '''
         
         self.title = self.title.encode('ascii')
-        self.authors = self.authors.encode('ascii')
+        
+        i = 0
+        for author in self.authors:
+            self.authors[i] = author.enocde('ascii')
+            i += 1
         self.publisher = self.publisher.encode('ascii')
         self.location = self.location.encode('ascii')
         self.description = self.description.encode('ascii')
         self.call_num = self.call_num.encode('ascii')
         
+    def __str__(self):
+        return self.title + " by: " + self.authors
         

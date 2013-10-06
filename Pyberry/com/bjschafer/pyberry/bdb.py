@@ -2,7 +2,7 @@ import sqlite3 as sqlite
 
 class Bdb(object):
     '''
-    database for storing the books.  uses python3 builtin module
+    database for storing the books.  uses python builtin module
     sqlite3.  it stores book objects, but it doesn't pickle
     or serialize them or anything awful like that.  it just
     stores each aspect of the object in the db as a separate
@@ -47,6 +47,7 @@ class Bdb(object):
         c = self.conn.cursor()
         t = book.getListRepresentation()
         t[-1] = str(t[-1])
+        t[3] = str(t[3])
         t = tuple(t)
         c.execute('''INSERT OR REPLACE INTO books VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',t)
         self.conn.commit()
@@ -54,10 +55,9 @@ class Bdb(object):
         
     def delete(self, book):
         '''
-        Deletes a book in the database.  This will require
-        some testing to ensure I've gotten it right.
+        Deletes a book in the database.
         '''
-
+        
         c = self.conn.cursor()
         c.execute('''DELETE FROM books WHERE bc=?''', (book.bc,))
         self.conn.commit()
@@ -67,7 +67,7 @@ class Bdb(object):
         retrieves a book given the barcode/unique id.
         '''
         c = self.conn.cursor()
-        c.execute('''SELECT * FROM books WHERE bc=?''', bc)
+        c.execute('''SELECT * FROM books WHERE bc=?''', (bc,))
         return c.fetchone()
     
     def search(self, field, term):
@@ -87,7 +87,7 @@ class Bdb(object):
             
             # @attention: I know using format for parameters isn't technically
             # safe or secure.  I did it for two reasons.  Number one, it just
-            # wouldn't work with pysqlite placeholders.  Number two, because
+            # wouldn't work with sqlite3 placeholders.  Number two, because
             # I have it fail above if the field isn't in a predefined list of
             # fields, it /should/ be okay.
             c.execute('''SELECT * FROM books WHERE {} LIKE ?'''.format(field),(term,))
