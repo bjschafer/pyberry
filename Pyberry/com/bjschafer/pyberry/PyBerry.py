@@ -72,7 +72,7 @@ def edit(editBook):
     newBook['barcode'] = raw_input("Barcode: " + str(editBook.bc))
     newBook['isbn'] = raw_input("ISBN: " + str(editBook.isbn))
     newBook['title'] = raw_input("Title: " + str(editBook.title)) # doesn't pull info for anything below.
-    newBook['authors'] = raw_input("Authors: " + str(','.join(editBook.authors)))
+    newBook['authors'] = raw_input("Authors: " + str(editBook.authors))
     newBook['pages'] = raw_input("Number of Pages: " + str(editBook.pages))
     newBook['publ_year'] = raw_input("Publication Year: " + str(editBook.publ_year))
     newBook['publisher'] = raw_input("Publisher: " + str(editBook.publisher))
@@ -81,14 +81,11 @@ def edit(editBook):
     newBook['call_num'] = raw_input("Call number: " + str(editBook.call_num))
     newBook['tags'] = raw_input("Tags: " + str(editBook.tags))
     
-    newBook['authors'] = newBook['authors'].split(',') # what if they're not changed?
-    newBook['tags'] = newBook['tags'].split(',')
-    
     for key,value in newBook.iteritems():
         if value == '':
             newBook[key] = None
     
-    oldBC = editBook.bc
+    oldBC = editBook.bc # we need this to ensure we don't create a duplicate db entry
     editBook.edit(newBook['barcode'], newBook['isbn'], newBook['title'], newBook['authors'], 
                   newBook['pages'], newBook['publ_year'], newBook['publisher'], 
                   newBook['location'], newBook['description'], newBook['call_num'],
@@ -177,8 +174,6 @@ def addBook():
             if item in substitutions:
                 manualAdd[substitutions[item]] = manualAdd.pop(item)
         
-        manualAdd['authors'] = manualAdd['authors'].split(',')
-        manualAdd['tags'] = manualAdd['tags'].split(',')
         manualBook = createBookFromDict(manualAdd)
         bookDB = Bdb(dbLocation)
         bookDB.store(manualBook)
@@ -204,7 +199,6 @@ def addBook():
         
         tags = raw_input('''Please enter any tags, separated by a comma: ''')
         tags = tags.strip()
-        tags = tags.split(',')
         bookInfo["tags"] = tags
     
         print '''Ok, everything should be set.  I'll show you what I've got,
@@ -261,7 +255,6 @@ def addBook():
         
         tags = raw_input('''Please enter any tags, separated by a comma: ''')
         tags = tags.strip()
-        tags = tags.split(',')
         bookInfo["tags"] = tags
         
         for key, value in bookInfo.iteritems():
