@@ -46,7 +46,7 @@ def search():
     It returns a list of search results.
     '''
     print "Welcome to searching!"
-    print '''You can search by: title, author, barcode, isbn, number of pages, publication year,
+    print '''You can search by: title, authors, barcode, isbn, number of pages, publication year,
     location, description, call number, or tags.'''
     search_field = raw_input("Which would you like to search by? ")
     search_term = raw_input("OK, go ahead: ")
@@ -65,19 +65,24 @@ def search():
   
 def edit(editBook):
     print ''''I'm going to show you each element of the book.  If you don't want
-              to change it, just press enter.  Otherwise, enter a new value.'''
+              to change it, just press enter.  Otherwise, enter a new value.
+              For multiple authors and tags, separate them by a comma.
+              e.g. author1,author2,author3'''
     newBook = {}
     newBook['barcode'] = raw_input("Barcode: " + str(editBook.bc))
     newBook['isbn'] = raw_input("ISBN: " + str(editBook.isbn))
     newBook['title'] = raw_input("Title: " + str(editBook.title)) # doesn't pull info for anything below.
-    newBook['authors'] = raw_input("Authors: " + str(editBook.authors)) # list...
+    newBook['authors'] = raw_input("Authors: " + str(','.join(editBook.authors)))
     newBook['pages'] = raw_input("Number of Pages: " + str(editBook.pages))
     newBook['publ_year'] = raw_input("Publication Year: " + str(editBook.publ_year))
     newBook['publisher'] = raw_input("Publisher: " + str(editBook.publisher))
     newBook['location'] = raw_input("Location: " + str(editBook.location))
     newBook['description'] = raw_input("Description: " + str(editBook.description))
     newBook['call_num'] = raw_input("Call number: " + str(editBook.call_num))
-    newBook['tags'] = raw_input("Tags: " + str(editBook.tags)) # list...
+    newBook['tags'] = raw_input("Tags: " + str(editBook.tags))
+    
+    newBook['authors'] = newBook['authors'].split(',') # what if they're not changed?
+    newBook['tags'] = newBook['tags'].split(',')
     
     for key,value in newBook.iteritems():
         if value == '':
@@ -148,7 +153,7 @@ def createBookFromDict(book_dict):
                 book_dict["description"], book_dict["call_num"], book_dict["tags"])
     return book
 
-def createBookFromList(book_list):
+def createBookFromList(book_list): # PROTIP:  also works for tuples
     book = Book(book_list[0], book_list[1], book_list[2], book_list[3], book_list[4], book_list[5], book_list[6], 
                 book_list[7], book_list[8], book_list[9], book_list[10])
     return book
@@ -163,13 +168,17 @@ def addBook():
     
     if addOption == 1:
         manualAdd = {}
+        print "If you have multiple authors or tags, please separate them with a comma."
+        print "e.g. author1,author2,author3"
         for item in terms:
-            manualAdd[item] = raw_input("Please enter the " + item)
+            manualAdd[item] = raw_input("Please enter the " + item + ": ")
             
         for item in manualAdd:
             if item in substitutions:
                 manualAdd[substitutions[item]] = manualAdd.pop(item)
         
+        manualAdd['authors'] = manualAdd['authors'].split(',')
+        manualAdd['tags'] = manualAdd['tags'].split(',')
         manualBook = createBookFromDict(manualAdd)
         bookDB = Bdb(dbLocation)
         bookDB.store(manualBook)

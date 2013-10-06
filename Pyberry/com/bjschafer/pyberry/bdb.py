@@ -2,7 +2,7 @@ import sqlite3 as sqlite
 
 class Bdb(object):
     '''
-    database for storing the books.  uses python3 builtin module
+    database for storing the books.  uses python builtin module
     sqlite3.  it stores book objects, but it doesn't pickle
     or serialize them or anything awful like that.  it just
     stores each aspect of the object in the db as a separate
@@ -55,8 +55,7 @@ class Bdb(object):
         
     def delete(self, book):
         '''
-        Deletes a book in the database.  This will require
-        some testing to ensure I've gotten it right.
+        Deletes a book in the database.
         '''
         
         c = self.conn.cursor()
