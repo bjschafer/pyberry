@@ -75,7 +75,11 @@ class Book(object):
         '''
         
         self.title = self.title.encode('ascii')
-        self.authors = self.authors.encode('ascii')
+        
+        i = 0
+        for author in self.authors:
+            self.authors[i] = author.enocde('ascii')
+            i += 1
         self.publisher = self.publisher.encode('ascii')
         self.location = self.location.encode('ascii')
         self.description = self.description.encode('ascii')
