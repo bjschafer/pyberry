@@ -1,3 +1,5 @@
+import unicodedata
+
 class Book(object):
     '''
     classdocs
@@ -69,21 +71,15 @@ class Book(object):
             
     def removeUnicode(self):
         '''
-        Removes the unicode (converts it to ascii) from each element of a book.
+        Removes the unicode (normalizes it to ascii) from each element of a book.
         Thus, eliminates the obnoxious u'.
-        Probably should come up with a better way to deal with unicode someday.
         '''
-        
-        self.title = self.title.encode('ascii')
-        
-        i = 0
-        for author in self.authors:
-            self.authors[i] = author.enocde('ascii')
-            i += 1
-        self.publisher = self.publisher.encode('ascii')
-        self.location = self.location.encode('ascii')
-        self.description = self.description.encode('ascii')
-        self.call_num = self.call_num.encode('ascii')
+        self.title = unicodedata.normalize('NFKD', unicode(self.title)).encode('ascii','ignore')
+        self.authors = unicodedata.normalize('NFKD', unicode(self.authors)).encode('ascii','ignore')
+        self.publisher = unicodedata.normalize('NFKD', unicode(self.publisher)).encode('ascii','ignore')
+        self.location = unicodedata.normalize('NFKD', unicode(self.location)).encode('ascii','ignore')
+        self.description = unicodedata.normalize('NFKD', unicode(self.description)).encode('ascii','ignore')
+        self.call_num = unicodedata.normalize('NFKD', unicode(self.call_num)).encode('ascii','ignore')
         
     def __str__(self):
         return self.title + " by: " + self.authors

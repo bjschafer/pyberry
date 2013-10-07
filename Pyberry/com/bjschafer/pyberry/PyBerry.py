@@ -90,7 +90,7 @@ def edit(editBook):
                   newBook['pages'], newBook['publ_year'], newBook['publisher'], 
                   newBook['location'], newBook['description'], newBook['call_num'],
                   newBook['tags'])
-    
+    editBook.removeUnicode()
     theDB = Bdb(dbLocation)
     if editBook.bc == None:
         theDB.store(editBook)
@@ -166,6 +166,7 @@ def addBook():
     if addOption == 1:
         manualAdd = {}
         print "If you have multiple authors or tags, please separate them with a comma."
+        print
         print "e.g. author1,author2,author3"
         for item in terms:
             manualAdd[item] = raw_input("Please enter the " + item + ": ")
@@ -175,6 +176,7 @@ def addBook():
                 manualAdd[substitutions[item]] = manualAdd.pop(item)
         
         manualBook = createBookFromDict(manualAdd)
+        manualBook.removeUnicode()
         bookDB = Bdb(dbLocation)
         bookDB.store(manualBook)
         
@@ -214,6 +216,7 @@ def addBook():
             raise ValueError
         else:
             addBook = createBookFromDict(bookInfo)
+            addBook.removeUnicode()
             bookDB = Bdb(dbLocation)
             bookDB.store(addBook)
             
@@ -279,6 +282,7 @@ def addBook():
             raise ValueError
         else:
             addBook = createBookFromDict(bookInfo)
+            addBook.removeUnicode()
             bookDB = Bdb(dbLocation)
             bookDB.store(addBook)
 
