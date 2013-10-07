@@ -31,15 +31,6 @@ def readWriteConfig():
         key = config.get('api', 'apiKey')
         return (loc, key)
     
-def randomBC():
-    '''
-    This probably isn't elegant, but it should give random numbers
-    that are rather not likely to collide.
-    '''
-    gen = random.Random()
-    temp = gen.randrange(100000,999999)
-    return abs(temp+gen.randrange(100000,999999))
-
 def search():
     '''
     This does the searching and user-interaction for it.
@@ -166,8 +157,9 @@ def addBook():
     if addOption == 1:
         manualAdd = {}
         print "If you have multiple authors or tags, please separate them with a comma."
-        print
         print "e.g. author1,author2,author3"
+        print "To autogenerate a barcode, enter -1 for it."
+        print
         for item in terms:
             manualAdd[item] = raw_input("Please enter the " + item + ": ")
             
@@ -188,10 +180,7 @@ def addBook():
         
         bc = int(bc)
         
-        if bc == -1:
-            bookInfo["bc"] = randomBC()
-        else:
-            bookInfo["bc"] = bc
+        bookInfo["bc"] = bc
         
         location = raw_input('''Please enter the location of the book, default blank: ''')
         bookInfo["location"] = location
@@ -245,10 +234,7 @@ def addBook():
         
         bc = int(bc)
         
-        if bc == -1:
-            bookInfo["bc"] = randomBC()
-        else:
-            bookInfo["bc"] = bc
+        bookInfo["bc"] = bc
         
         location = raw_input('''Please enter the location of the book, default blank: ''')
         bookInfo["location"] = location
