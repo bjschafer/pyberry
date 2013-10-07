@@ -46,10 +46,15 @@ class Bdb(object):
         '''
         c = self.conn.cursor()
         t = book.getListRepresentation()
-        t[-1] = str(t[-1])
+        t[-1] = str(t[-1]) # what do these lines do?
         t[3] = str(t[3])
-        t = tuple(t)
-        c.execute('''INSERT OR REPLACE INTO books VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',t)
+        if t[0] == -1: # if the barcode is -1, e.g. should autoincrement
+            t = tuple(t)
+            c.execute('''INSERT OR REPLACE INTO books (isbn, title, authors, pages, publ_year, publisher, location, description, call_num, tags)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', t)
+        else:
+            t = tuple(t)
+            c.execute('''INSERT OR REPLACE INTO books VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', t)
         self.conn.commit()
         c.close()
         
