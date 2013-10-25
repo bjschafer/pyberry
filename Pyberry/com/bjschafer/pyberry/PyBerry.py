@@ -217,10 +217,15 @@ def addBook():
         raw_input('''The following are the results.  Please enter the number of the\n
         result you'd like.  Press any key to display them.''')
         for book in books:
-            print '%i) Title: %s, Authors: %s' % (
+            try:
+                print '%i) Title: %s, Authors: %s' % (
                                                   count,
                                                   book['volumeInfo']['title'],
                                                   str(book['volumeInfo']['authors']).strip('[]'))
+            except KeyError:
+                print '%i) Title: %s, No authors listed.' % (
+                                                      count,
+                                                      book['volumeInfo']['title'])
             count += 1
         userChoice = raw_input("Which result would you like? ")
         
