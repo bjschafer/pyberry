@@ -176,7 +176,7 @@ def addBook():
         isbn = raw_input("Please enter the 10 or 13 digit ISBN: ")
         lookup = Lookup()
         bookInfo = lookup.byISBN(isbn)
-        bc = ('''Please enter a unique barcode, or -1 to autogenerate: ''')
+        bc = raw_input('''Please enter a unique barcode, or -1 to autogenerate: ''')
         
         bc = int(bc)
         
@@ -217,10 +217,15 @@ def addBook():
         raw_input('''The following are the results.  Please enter the number of the\n
         result you'd like.  Press any key to display them.''')
         for book in books:
-            print '%i) Title: %s, Authors: %s' % (
+            try:
+                print '%i) Title: %s, Authors: %s' % (
                                                   count,
                                                   book['volumeInfo']['title'],
                                                   str(book['volumeInfo']['authors']).strip('[]'))
+            except KeyError:
+                print '%i) Title: %s, No authors listed.' % (
+                                                      count,
+                                                      book['volumeInfo']['title'])
             count += 1
         userChoice = raw_input("Which result would you like? ")
         

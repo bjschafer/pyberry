@@ -66,7 +66,7 @@ class Lookup(object):
             request = service.volumes().list(source='public', q='isbn:'+str(isbn))
             response = request.execute()
             
-            bookDict = self._createDict(response)
+            bookDict = self._createDict(response['items'][0])
             bookDict['isbn'] = isbn
             return bookDict
         
