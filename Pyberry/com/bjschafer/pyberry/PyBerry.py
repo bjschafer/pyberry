@@ -176,7 +176,7 @@ def addBook():
         isbn = raw_input("Please enter the 10 or 13 digit ISBN: ")
         lookup = Lookup()
         bookInfo = lookup.byISBN(isbn)
-        bc = ('''Please enter a unique barcode, or -1 to autogenerate: ''')
+        bc = raw_input('''Please enter a unique barcode, or -1 to autogenerate: ''')
         
         bc = int(bc)
         
