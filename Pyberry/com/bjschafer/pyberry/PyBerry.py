@@ -1,11 +1,15 @@
 import ConfigParser
 import os.path
-import random
 from com.bjschafer.pyberry.lookup import Lookup
 from com.bjschafer.pyberry.book import Book
 from com.bjschafer.pyberry.bdb import Bdb
 
-#TODO: change settings in program.
+class UserQuit(Exception):
+    def __init__(self, value):
+        self.value = value
+        
+    def __str__(self):
+        return repr(self.value)
 
 terms = ["title", "authors", "barcode", "isbn", "number of pages", "publication year",
          "publisher", "location", "description", "call number", "tags"]
@@ -227,7 +231,10 @@ def addBook():
                                                       count,
                                                       book['volumeInfo']['title'])
             count += 1
-        userChoice = raw_input("Which result would you like? ")
+        userChoice = raw_input("Which result would you like? Or hit enter for none.")
+        
+        if userChoice == '':
+            raise UserQuit
         
         userChoice = int(userChoice)
 
@@ -409,6 +416,8 @@ if __name__ == '__main__':
             except ValueError: # They do the same thing, but for future's sake...
                 print "Invalid input."
                 continue
+            except UserQuit:
+                continue
                 
         elif todo == 2:
             deleteBook()
@@ -428,6 +437,7 @@ if __name__ == '__main__':
                 print "Changed successfully."
                     
         elif todo == 7:
+            print "So long, and thanks for all the fish!"
             run = False
         
         else:
