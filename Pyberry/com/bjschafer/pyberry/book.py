@@ -1,14 +1,9 @@
 import unicodedata
 
+
 class Book(object):
-    '''
-    classdocs
-    '''
 
     def __init__(self, bc, isbn=0, title="", authors=[], pages=0, publ_year=0, publisher="", location="", description="", call_num="", tags=[]):
-        '''
-        Constructor
-        '''
         self.bc = bc
         self.isbn = isbn
         self.title = title
@@ -22,38 +17,46 @@ class Book(object):
         self.tags = tags
         
     def edit(self, bc=None, isbn=None, title=None, authors=None, pages=None, publ_year=None, publisher=None, location=None, description=None, call_num=None, tags=None):
-        '''Edit a book.  Specify any parameter.  I love Python.'''
-        if bc != None:
+        if bc is not None:
             self.bc = bc
-        if isbn != None:
+        if isbn is not None:
             self.isbn = isbn
-        if title != None:
+        if title is not None:
             self.title = title
-        if authors != None:
+        if authors is not None:
             self.authors = authors
-        if pages != None:
+        if pages is not None:
             self.pages = pages
-        if publ_year != None:
+        if publ_year is not None:
             self.publ_year = publ_year
-        if publisher != None:
+        if publisher is not None:
             self.publisher = publisher
-        if location != None:
+        if location is not None:
             self.location = location
-        if description != None:
+        if description is not None:
             self.description = description
-        if call_num != None:
+        if call_num is not None:
             self.call_num = call_num
-        if tags != None:
+        if tags is not None:
             self.tags = tags
         
-    def getListRepresentation(self):
-        '''gets a representation of all elements of the book
-        in a list, for easy storing in the db.'''
+    def get_list_representation(self):
+        """
+        Get a list representation of book elements for storing in DB.
+
+        @return: This represented as a list.
+        """
+
         return [self.bc, self.isbn, self.title, self.authors, self.pages, self.publ_year,
                 self.publisher, self.location, self.description, self.call_num, self.tags]
     
-    def createFromList(self, myList):
-        '''Fills in the details of a book from a list.'''
+    def create_from_list(self, myList):
+        """
+        Fill in details of this from a list.
+
+        @param myList: list formatted just right
+        """
+
         if len(myList) != 11:
             raise ValueError("Incorrect list length")
         else:
@@ -69,11 +72,13 @@ class Book(object):
             self.call_num = myList[9]
             self.tags = myList[10]
             
-    def removeUnicode(self):
-        '''
-        Removes the unicode (normalizes it to ascii) from each element of a book.
-        Thus, eliminates the obnoxious u'.
-        '''
+    def remove_unicode(self):
+        """
+        Remove unicode in this book.
+
+        Remove the unicode in this book by normalizing it to ASCII.  This eliminates the obnoxious u'
+        """
+
         self.title = unicodedata.normalize('NFKD', unicode(self.title)).encode('ascii','ignore')
         self.authors = unicodedata.normalize('NFKD', unicode(self.authors)).encode('ascii','ignore')
         self.publisher = unicodedata.normalize('NFKD', unicode(self.publisher)).encode('ascii','ignore')
@@ -83,4 +88,3 @@ class Book(object):
         
     def __str__(self):
         return self.title + " by: " + self.authors
-        

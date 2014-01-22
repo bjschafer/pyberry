@@ -13,24 +13,22 @@ class Lookup(object):
 
     def _get_publisher_from_json_dict(self, data):
         """
-        Creates a new Publisher instance based on a JSON dict.
+        Get the publisher data from a JSON dict.
 
-        Args:
-            data: a Json dictionary
-        Returns:
-            The data
+        @param data: a JSON dictionary
+        @return: the author
         """
+
         return data.get('name')
 
     def _get_author_from_json_dict(self, data):
         """
-        Creates a new Author instance based on a JSON dict.
+        Get the author data from a JSON dict.
 
-        Args:
-            data: a Json dictionary
-        Returns:
-            The data
+        @param data: a JSON dictionary
+        @return: the author
         """
+
         return data.get('name', None), data.get('url', None)
 
     def _get_book_from_json_dict(self, data):
@@ -84,6 +82,12 @@ class Lookup(object):
         return book
 
     def by_title(self, title):
+        """
+        Search for a book on OpenLibrary by title
+
+        @param title: the title to search for
+        @return: the raw data of all results
+        """
         title = title.replace(' ', '+').lower()
         url = urllib2.urlopen(self.search_url+'title='+title)
         return simplejson.load(url)
