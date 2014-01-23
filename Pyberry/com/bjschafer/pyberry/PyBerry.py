@@ -190,58 +190,53 @@ def add_book():
     elif add_option == 2:
         isbn = raw_input("Please enter the 10 or 13 digit ISBN: ")
         lookup = Lookup()
-        book_info = lookup.byISBN(isbn)
+        book = lookup.by_isbn(isbn)
         bc = raw_input('''Please enter a unique barcode, or -1 to autogenerate: ''')
 
         bc = int(bc)
 
-        book_info["bc"] = bc
+        book.bc = bc
 
         location = raw_input('''Please enter the location of the book, default blank: ''')
-        book_info["location"] = location
+        book.location = location
 
         call_num = raw_input('''Please enter the call number of the book: ''')
-        book_info["call_num"] = call_num
+        book.call_num = call_num
 
         tags = raw_input('''Please enter any tags, separated by a comma: ''')
         tags = tags.strip()
-        book_info["tags"] = tags
+        book.tags = tags
 
         print '''Ok, everything should be set.  I'll show you what I've got,
         and if it looks good, just press enter, otherwise type something in
         and I'll return you to the beginning.'''
 
-        for item in book_info:
-            print str(item) + ": " + str(book_info[item])
+        book.print_check()
 
         is_ok = raw_input("")
 
         if is_ok != "": # not 100% sure this will work
             raise ValueError
         else:
-            addbook = create_book_from_dict(book_info)
-            addbook.remove_unicode()
+            book.remove_unicode()
             book_db = Bdb(dbLocation)
-            book_db.store(addbook)
+            book_db.store(book)
 
     elif add_option == 3:
         title = raw_input("Please enter the title you'd like to search for:")
         lookup = Lookup()
-        books = lookup.byTitle(title)
-        count = 1
-        raw_input('''The following are the results.  Please enter the number of the\n
-        result you'd like.  Press any key to display them.''')
-        for book in books:
-            try:
-                print '%i) Title: %s, Authors: %s' % (
-                    count,
-                    book['volumeInfo']['title'],
-                    str(book['volumeInfo']['authors']).strip('[]'))
-            except KeyError:
-                print '%i) Title: %s, No authors listed.' % (
-                    count,
-                    book['volumeInfo']['title'])
-            count += 1
+        raw_input("The following are the results.  Please enter the number of the " +
+                  "result you'd like.  Press any key to display them.")
+        books = []
+        for index, book in enumerate(lookup.by_title(title), start=1):
+            if index == 11:
+                break  # only print first 10 results?? Not very elegant.
+            print '%i) Title: %s, Author(s): %s' % (
+                index,
+                book.title,
+                str(book.authors).strip('[]')
+            )
+            books.append(book)
         user_choice = raw_input("Which result would you like? Or hit enter for none.")
 
         if user_choice == '':
@@ -251,49 +246,37 @@ def add_book():
 
         user_choice -= 1  # need to compensate for off-by-one.
 
-        book_info = lookup.chooseResponse(books[user_choice]['id'])
+        book = books[user_choice]
 
         bc = raw_input('''Please enter a unique barcode, or -1 to autogenerate: ''')
-
         bc = int(bc)
-
-        book_info["bc"] = bc
+        book.bc = bc
 
         location = raw_input('''Please enter the location of the book, default blank: ''')
-        book_info["location"] = location
+        book.location = location
 
         call_num = raw_input('''Please enter the call number of the book: ''')
-        book_info["call_num"] = call_num
+        book.call_num = call_num
 
         tags = raw_input('''Please enter any tags, separated by a comma: ''')
         tags = tags.strip()
-        book_info["tags"] = tags
+        book.tags = tags
 
-        for key, value in book_info.iteritems():
-            try:
-                value = value.encode('ascii', 'ignore')
-            except AttributeError:
-                pass
-            book_info[key] = value
-
-        if not 'isbn' in book_info:
-            book_info['isbn'] = 0
+        assert isinstance(book, Book)
         print '''Ok, everything should be set.  I'll show you what I've got,
         and if it looks good, just press enter, otherwise type something in
         and I'll return you to the beginning.'''
 
-        for item in book_info:
-            print str(item) + ": " + str(book_info[item])
+        book.print_check()
 
         is_ok = raw_input("")
 
-        if is_ok != "":  # not 100% sure this will work
-            raise ValueError
+        if is_ok != "":
+            raise ValueError  # should consider changing to a UserQuit exception.
         else:
-            addbook = create_book_from_dict(book_info)
-            addbook.remove_unicode()
+            book.remove_unicode()
             book_db = Bdb(dbLocation)
-            book_db.store(addbook)
+            book_db.store(book)
 
 
 def delete_book():
@@ -433,6 +416,7 @@ if __name__ == '__main__':
                 print "Invalid input."
                 continue
             except UserQuit:
+                print "Returning you to the beginning."
                 continue
 
         elif todo == 2:

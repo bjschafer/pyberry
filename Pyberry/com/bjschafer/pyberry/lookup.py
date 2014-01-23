@@ -29,7 +29,7 @@ class Lookup(object):
         @return: the author
         """
 
-        return data.get('name', None), data.get('url', None)
+        return data.get('name', None)
 
     def _get_book_from_json_dict(self, data):
         """
@@ -38,9 +38,9 @@ class Lookup(object):
         @param data: a JSON dictionary
         @return: a new Book instance (sans ISBN)
         """
-        publishers = [self._get_publisher_from_json_dict(p) for p in data['publishers']]
-        authors = [self._get_author_from_json_dict(a) for a in data['authors']]
-        book = Book(-1)  # better to create an object, even if there's no valid barcode yet
+        publishers = ', '.join([self._get_publisher_from_json_dict(p) for p in data['publishers']])
+        authors = ', '.join([self._get_author_from_json_dict(a) for a in data['authors']])
+        book = Book(0)  # better to create an object, even if there's no valid barcode yet
         book.title = data.get('title', None)
         book.publisher = publishers
         book.authors = authors
@@ -90,4 +90,26 @@ class Lookup(object):
         """
         title = title.replace(' ', '+').lower()
         url = urllib2.urlopen(self.search_url+'title='+title)
-        return simplejson.load(url)
+        data = simplejson.load(url)['docs']
+
+        for result in data:
+            book = Book(0)
+            book.title = result['title']
+            try:
+                book.authors = ', '.join(result['author_name']) if isinstance(result['publisher'], list) else result['author_name']
+            except KeyError:
+                book.authors = "None"
+            try:
+                book.publisher = ', '.join(result['publisher']) if isinstance(result['publisher'], list) else result['publisher']
+            except KeyError:
+                book.publisher = "No publisher found."
+            try:
+                book.publ_year = result['first_publish_year']
+            except KeyError:
+                book.publ_year = 0
+            try:
+                book.description = ''.join(result['first_sentence'])
+            except KeyError:
+                book.description = "No description found."
+
+            yield book
