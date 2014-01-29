@@ -5,14 +5,6 @@ from book import Book
 from bdb import Bdb
 
 
-class UserQuit(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
 terms = ["title", "authors", "barcode", "isbn", "number of pages", "publication year",
          "publisher", "location", "description", "call number", "tags"]
 substitutions = {"barcode": "bc", "number of pages": "pages", "publication year": "publ_year",
@@ -51,6 +43,9 @@ def search():
     location, description, call number, or tags.'''
     search_field = raw_input("Which would you like to search by? ")
     search_term = raw_input("OK, go ahead: ")
+
+    if '' == search_field or '' == search_term:
+        return 2
 
     if search_field not in terms:
         print "Error, exiting."
@@ -215,7 +210,7 @@ def add_book():
 
         is_ok = raw_input("")
 
-        if is_ok != "": # not 100% sure this will work
+        if is_ok != "":  # not 100% sure this will work
             raise ValueError
         else:
             book.remove_unicode()
@@ -240,7 +235,7 @@ def add_book():
         user_choice = raw_input("Which result would you like? Or hit enter for none.")
 
         if user_choice == '':
-            raise UserQuit
+            return 2
 
         user_choice = int(user_choice)
 
@@ -332,12 +327,15 @@ def edit_book():
             edit_choice = int(edit_choice)
             the_db = Bdb(dbLocation)
             edit_choice = the_db.retrieve(edit_choice)
-            edit_choice = create_book_from_list(edit_choice) # might not need this?
+            edit_choice = create_book_from_list(edit_choice)  # might not need this?
             edit(edit_choice)
 
 
 def search_book():
     results = search()
+    if 2 == results:
+        print "Returning you to the beginning"
+        return
     i = 1
     for item in results:
         print str(i) + ") " + str(item)
@@ -347,6 +345,7 @@ def show_all_books():
     the_db = Bdb(dbLocation)
     for item in the_db.get_all():
         print item
+    raw_input("Press any key to continue.")
 
 
 def change_db_location():
@@ -364,7 +363,7 @@ def change_db_location():
         Current path %s''' % loc)
 
         try:
-            f = open(new_loc, 'r')
+            f = open(new_loc, 'w+')
         except IOError:
             print "Sorry, %s won't work.\nI'll return you to the menu." % new_loc
             return 1
@@ -378,7 +377,7 @@ def change_db_location():
 
 
 if __name__ == '__main__':
-    dbLocation, apiKey = read_write_config()  #verify syntax of this
+    dbLocation, apiKey = read_write_config()  # verify syntax of this
 
     run = True
 
@@ -408,15 +407,14 @@ if __name__ == '__main__':
 
         if todo == 1:
             try:
-                add_book()
+                if 2 == add_book():
+                    print "Returning you to the beginning."
+                    continue
             except TypeError:
                 print "Invalid input."
                 continue
             except ValueError:  # They do the same thing, but for future's sake...
                 print "Invalid input."
-                continue
-            except UserQuit:
-                print "Returning you to the beginning."
                 continue
 
         elif todo == 2:
@@ -432,8 +430,7 @@ if __name__ == '__main__':
             show_all_books()
 
         elif todo == 6:
-            exitStatus = change_db_location()
-            if exitStatus == 0:
+            if 0 == change_db_location():
                 print "Changed successfully."
 
         elif todo == 7:
