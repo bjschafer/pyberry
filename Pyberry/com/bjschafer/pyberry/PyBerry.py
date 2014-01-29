@@ -5,14 +5,6 @@ from book import Book
 from bdb import Bdb
 
 
-class UserQuit(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
 terms = ["title", "authors", "barcode", "isbn", "number of pages", "publication year",
          "publisher", "location", "description", "call number", "tags"]
 substitutions = {"barcode": "bc", "number of pages": "pages", "publication year": "publ_year",
@@ -51,6 +43,9 @@ def search():
     location, description, call number, or tags.'''
     search_field = raw_input("Which would you like to search by? ")
     search_term = raw_input("OK, go ahead: ")
+
+    if '' == search_field or '' == search_term:
+        return 2
 
     if search_field not in terms:
         print "Error, exiting."
@@ -240,7 +235,7 @@ def add_book():
         user_choice = raw_input("Which result would you like? Or hit enter for none.")
 
         if user_choice == '':
-            raise UserQuit
+            return 2
 
         user_choice = int(user_choice)
 
@@ -338,6 +333,9 @@ def edit_book():
 
 def search_book():
     results = search()
+    if 2 == results:
+        print "Returning you to the beginning"
+        return
     i = 1
     for item in results:
         print str(i) + ") " + str(item)
@@ -409,15 +407,14 @@ if __name__ == '__main__':
 
         if todo == 1:
             try:
-                add_book()
+                if 2 == add_book():
+                    print "Returning you to the beginning."
+                    continue
             except TypeError:
                 print "Invalid input."
                 continue
             except ValueError:  # They do the same thing, but for future's sake...
                 print "Invalid input."
-                continue
-            except UserQuit:
-                print "Returning you to the beginning."
                 continue
 
         elif todo == 2:
@@ -433,8 +430,7 @@ if __name__ == '__main__':
             show_all_books()
 
         elif todo == 6:
-            exitStatus = change_db_location()
-            if exitStatus == 0:
+            if 0 == change_db_location():
                 print "Changed successfully."
 
         elif todo == 7:
