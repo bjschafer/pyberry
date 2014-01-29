@@ -3,6 +3,8 @@ import os.path
 from lookup import Lookup
 from book import Book
 from bdb import Bdb
+import appdirs
+import sys
 
 
 terms = ["title", "authors", "barcode", "isbn", "number of pages", "publication year",
@@ -11,24 +13,35 @@ substitutions = {"barcode": "bc", "number of pages": "pages", "publication year"
                  "call number": "call_num"}
 
 
-def read_write_config():
-    if not os.path.isfile('.pyberry'):  # check if the file exists, if not we're creating it.
-        config = ConfigParser.RawConfigParser()
-        config.add_section("local")
-        config.add_section("api")
-
-        config.set('local', 'dbPath', '.pyberry.sqlite')
-        config.set('api', 'apiKey', '')
-
-        with open('.pyberry', 'wb') as configFile:
-            config.write(configFile)
-        read_write_config()  # this should now go and fill in default values, but needs testing
+def write_config():
+    config_path = appdirs.user_data_dir("Pyberry")
+    if sys.platform == 'win32' or sys.platform == 'win64':
+        config_path += '''\\'''
     else:
-        config = ConfigParser.RawConfigParser()
-        config.read('.pyberry')
-        loc = config.get('local', 'dbPath')
-        key = config.get('api', 'apiKey')
-        return loc, key
+        config_path += '/'
+    config = ConfigParser.RawConfigParser()
+    config.add_section("local")
+
+    config.set('local', 'dbPath', config_path + '.pyberry.sqlite')
+
+    with open(config_path + '.pyberry', 'wb') as configFile:
+        config.write(configFile)
+
+
+def read_config():
+    config_path = appdirs.user_data_dir("Pyberry")
+    if sys.platform == 'win32' or sys.platform == 'win64':
+        config_path += '''\\'''
+    else:
+        config_path += '/'
+    print config_path
+    if not os.path.exists(config_path):
+        os.makedirs(config_path)
+    if not os.path.isfile(config_path + '.pyberry'):
+        write_config()
+    config = ConfigParser.RawConfigParser()
+    config.read(config_path + '.pyberry')
+    return config.get('local', 'dbPath')
 
 
 def search():
@@ -377,7 +390,7 @@ def change_db_location():
 
 
 if __name__ == '__main__':
-    dbLocation, apiKey = read_write_config()  # verify syntax of this
+    dbLocation = read_config()
 
     run = True
 
