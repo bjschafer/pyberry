@@ -215,7 +215,7 @@ def add_book():
 
         is_ok = raw_input("")
 
-        if is_ok != "": # not 100% sure this will work
+        if is_ok != "":  # not 100% sure this will work
             raise ValueError
         else:
             book.remove_unicode()
@@ -332,7 +332,7 @@ def edit_book():
             edit_choice = int(edit_choice)
             the_db = Bdb(dbLocation)
             edit_choice = the_db.retrieve(edit_choice)
-            edit_choice = create_book_from_list(edit_choice) # might not need this?
+            edit_choice = create_book_from_list(edit_choice)  # might not need this?
             edit(edit_choice)
 
 
@@ -364,7 +364,7 @@ def change_db_location():
         Current path %s''' % loc)
 
         try:
-            f = open(new_loc, 'r')
+            f = open(new_loc, 'w+')
         except IOError:
             print "Sorry, %s won't work.\nI'll return you to the menu." % new_loc
             return 1
@@ -378,7 +378,7 @@ def change_db_location():
 
 
 if __name__ == '__main__':
-    dbLocation, apiKey = read_write_config()  #verify syntax of this
+    dbLocation, apiKey = read_write_config()  # verify syntax of this
 
     run = True
 
