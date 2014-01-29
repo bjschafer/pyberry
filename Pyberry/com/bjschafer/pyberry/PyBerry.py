@@ -347,6 +347,7 @@ def show_all_books():
     the_db = Bdb(dbLocation)
     for item in the_db.get_all():
         print item
+    raw_input("Press any key to continue.")
 
 
 def change_db_location():
