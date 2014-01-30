@@ -1,16 +1,22 @@
 import ConfigParser
 import os.path
+import datetime
 from lookup import Lookup
 from book import Book
 from bdb import Bdb
+from person import Person
+from loan import Loan
 import appdirs
 import sys
 
 
-terms = ["title", "authors", "barcode", "isbn", "number of pages", "publication year",
-         "publisher", "location", "description", "call number", "tags"]
-substitutions = {"barcode": "bc", "number of pages": "pages", "publication year": "publ_year",
-                 "call number": "call_num"}
+book_terms = ["title", "authors", "barcode", "isbn", "number of pages", "publication year",
+              "publisher", "location", "description", "call number", "tags"]
+book_substitutions = {"barcode": "bc", "number of pages": "pages", "publication year": "publ_year",
+                      "call number": "call_num"}
+
+person_terms = ["unique id", "first name", "last name", "email", "phone number", "address", "city", "state" "notes"]
+person_substitutions = {"unique id": "id", "first name": "first_name", "last name": "last_name", "phone number": "phone_num"}
 
 
 def write_config():
@@ -44,7 +50,7 @@ def read_config():
     return config.get('local', 'dbPath')
 
 
-def search():
+def search_book_helper():
     """
     Do searching and user-interaction for it.
 
@@ -60,53 +66,53 @@ def search():
     if '' == search_field or '' == search_term:
         return 2
 
-    if search_field not in terms:
+    if search_field not in book_terms:
         print "Error, exiting."
         return
     elif search_term == "":
         print "Error, exiting."
         return
     else:
-        if search_field in substitutions:
-            search_field = substitutions[search_field]
+        if search_field in book_substitutions:
+            search_field = book_substitutions[search_field]
         the_db = Bdb(dbLocation)
         return the_db.search_book(search_field, search_term)
 
 
-def edit(edit_book):
+def edit_book_helper(edit_bk):
     print ''''I'm going to show you each element of the book.  If you don't want
               to change it, just press enter.  Otherwise, enter a new value.
               For multiple authors and tags, separate them by a comma.
               e.g. author1,author2,author3'''
     new_book = {}
-    new_book['barcode'] = raw_input("Barcode: " + str(edit_book.bc))
-    new_book['isbn'] = raw_input("ISBN: " + str(edit_book.isbn))
-    new_book['title'] = raw_input("Title: " + str(edit_book.title))  # doesn't pull info for anything below.
-    new_book['authors'] = raw_input("Authors: " + str(edit_book.authors))
-    new_book['pages'] = raw_input("Number of Pages: " + str(edit_book.pages))
-    new_book['publ_year'] = raw_input("Publication Year: " + str(edit_book.publ_year))
-    new_book['publisher'] = raw_input("Publisher: " + str(edit_book.publisher))
-    new_book['location'] = raw_input("Location: " + str(edit_book.location))
-    new_book['description'] = raw_input("Description: " + str(edit_book.description))
-    new_book['call_num'] = raw_input("Call number: " + str(edit_book.call_num))
-    new_book['tags'] = raw_input("Tags: " + str(edit_book.tags))
+    new_book['barcode'] = raw_input("Barcode: " + str(edit_bk.bc))
+    new_book['isbn'] = raw_input("ISBN: " + str(edit_bk.isbn))
+    new_book['title'] = raw_input("Title: " + str(edit_bk.title))  # doesn't pull info for anything below.
+    new_book['authors'] = raw_input("Authors: " + str(edit_bk.authors))
+    new_book['pages'] = raw_input("Number of Pages: " + str(edit_bk.pages))
+    new_book['publ_year'] = raw_input("Publication Year: " + str(edit_bk.publ_year))
+    new_book['publisher'] = raw_input("Publisher: " + str(edit_bk.publisher))
+    new_book['location'] = raw_input("Location: " + str(edit_bk.location))
+    new_book['description'] = raw_input("Description: " + str(edit_bk.description))
+    new_book['call_num'] = raw_input("Call number: " + str(edit_bk.call_num))
+    new_book['tags'] = raw_input("Tags: " + str(edit_bk.tags))
 
     for key, value in new_book.iteritems():
         if value == '':
             new_book[key] = None
 
-    old_bc = edit_book.bc # we need this to ensure we don't create a duplicate db entry
-    edit_book.edit(new_book['barcode'], new_book['isbn'], new_book['title'], new_book['authors'],
-                   new_book['pages'], new_book['publ_year'], new_book['publisher'],
-                   new_book['location'], new_book['description'], new_book['call_num'],
-                   new_book['tags'])
-    edit_book.remove_unicode()
+    old_bc = edit_bk.bc # we need this to ensure we don't create a duplicate db entry
+    edit_bk.edit(new_book['barcode'], new_book['isbn'], new_book['title'], new_book['authors'],
+                 new_book['pages'], new_book['publ_year'], new_book['publisher'],
+                 new_book['location'], new_book['description'], new_book['call_num'],
+                 new_book['tags'])
+    edit_bk.remove_unicode()
     the_db = Bdb(dbLocation)
-    if edit_book.bc is None:
-        the_db.store_book(edit_book)
+    if edit_bk.bc is None:
+        the_db.store_book(edit_bk)
     else:
         the_db.delete_book(Book(old_bc))
-        the_db.store_book(edit_book)
+        the_db.store_book(edit_bk)
 
 
 def print_logo():
@@ -183,12 +189,12 @@ def add_book():
         print "e.g. author1,author2,author3"
         print "To autogenerate a barcode, enter -1 for it."
         print
-        for item in terms:
+        for item in book_terms:
             manual_add[item] = raw_input("Please enter the " + item + ": ")
 
         for item in manual_add:
-            if item in substitutions:
-                manual_add[substitutions[item]] = manual_add.pop(item)
+            if item in book_substitutions:
+                manual_add[book_substitutions[item]] = manual_add.pop(item)
 
         manual_book = create_book_from_dict(manual_add)
         manual_book.remove_unicode()
@@ -290,7 +296,7 @@ def add_book():
 def delete_book():
     to_do = raw_input('''We're going to delete a book.  Do you have the barcode? [y/N]: ''')
     if to_do.strip() == "" or to_do.strip().lower() == "n":
-        results = search()
+        results = search_book_helper()
         i = 1
         for item in results:
             print(i + ") " + item)  # not sure how this will come out.
@@ -320,7 +326,7 @@ def delete_book():
 def edit_book():
     to_do = raw_input("We're going to edit a book.  Do you have the barcode? [y/N]: ")
     if to_do.strip() == "" or to_do.strip().lower() == "n":
-        results = search()
+        results = search_book_helper()
         i = 1
         for item in results:
             print (str(i) + ") " + str(item))  # not sure how this will come out, same as above.
@@ -330,7 +336,7 @@ def edit_book():
         edit_choice = results[edit_choice - 1]
         edit_choice = list(edit_choice)
         edit_choice = create_book_from_list(edit_choice)
-        edit(edit_choice)
+        edit_book_helper(edit_choice)
 
     elif to_do.strip().lower() == "y":
         edit_choice = raw_input("Ok, enter it now: ")
@@ -341,11 +347,11 @@ def edit_book():
             the_db = Bdb(dbLocation)
             edit_choice = the_db.retrieve_book(edit_choice)
             edit_choice = create_book_from_list(edit_choice)  # might not need this?
-            edit(edit_choice)
+            edit_book_helper(edit_choice)
 
 
 def search_book():
-    results = search()
+    results = search_book_helper()
     if 2 == results:
         print "Returning you to the beginning"
         return
@@ -389,6 +395,158 @@ def change_db_location():
         return 0
 
 
+def create_person_from_list(person_list):
+    person = Person(person_list[0], person_list[1], person_list[2], person_list[3], person_list[4], person_list[5],
+                    person_list[7], person_list[8])
+    return person
+
+
+def add_person():
+    print "Let's add a new person!  Feel free to leave anything blank."
+    print
+    first_name = raw_input("What's the person's first name?")
+    last_name = raw_input("\t\t...last name?")
+    email = raw_input("\t\t...email?")
+    phone_num = raw_input("\t\t...phone number?")
+    address = raw_input("\t\t...address?")
+    city = raw_input("\t\t...city?")
+    state = raw_input("\t\t...state?")
+    notes = raw_input("\t\t...any notes?")
+
+    print "Do you have a unique ID you'd like to use for this person?"
+    uid = raw_input("If yes, enter it, otherwise enter -1")
+    new_person = Person(uid, first_name, last_name, email, phone_num, address, city, state, notes)
+
+    people_db = Bdb(dbLocation)
+    people_db.store_person(new_person)
+
+
+def search_people():
+    print "Welcome to searching!"
+    print '''You can search by: unique id, first name, last name, email, phone number, address, city, state, or notes.'''
+    search_field = raw_input("Which would you like to search by? ")
+    search_field = search_field.lower()
+    search_term = raw_input("OK, go ahead: ")
+
+    if search_field not in person_terms:
+        print "Error, exiting."
+        return
+    elif search_term == "":
+        print "Error, exiting."
+        return
+    else:
+        if search_field in person_substitutions:
+            search_field = person_substitutions[search_field]
+            theDB = Bdb(dbLocation)
+            return theDB.search_person(search_field, search_term)
+
+
+def lend_book():
+    print "To whom would you like to lend a book?"
+    todo = raw_input("Do you have their unique ID? [y/N]: ")
+    if todo.strip() == "" or todo.strip().lower() == 'n':
+        results = search_people()
+        i = 1
+        for item in results:
+            print (str(i) + ") " + str(item)) # not sure how this will come out, same as above.
+        lend_person = raw_input("Who is it? ")
+
+        lend_person = int(lend_person)
+        lend_person = results[lend_person - 1]
+        lend_person = list(lend_person)
+        lend_person = create_person_from_list(lend_person)
+
+        print "Which book would you like to lend?"
+        todo = raw_input("Do you have its barcode? [y/N]: ")
+        if todo.strip == "" or todo.strip().lower() == 'n':
+            results = search_book_helper()
+            i = 1
+            for item in results:
+                print (str(i) + ") " + str(item))
+            book_lend = raw_input("Which one is it? ")
+
+            book_lend = int(book_lend)
+            book_lend = results[book_lend - 1]
+            book_lend = list(book_lend)
+            book_lend = create_book_from_list(book_lend)
+
+            the_db = Bdb(dbLocation)
+
+            due_date = datetime.date.today() + datetime.timedelta(days=30)
+            user_date = raw_input("When is it due? [" + str(due_date) + "]: ")
+            if user_date.strip() == "":
+                loan = Loan(-1, book_lend, lend_person, datetime.date.today(), due_date, False)
+                the_db.store_loan(loan)
+            else:
+                user_date = user_date.strip()
+                user_date = datetime.datetime.strptime(user_date, "%Y-%m-%d").date()
+                loan = Loan(-1, book_lend, lend_person, datetime.date.today(), due_date, False)
+                the_db.store_loan(loan)
+
+        elif todo.strip().lower() == 'y':
+            bc = raw_input("Ok, enter it now: ")
+            if bc.strip() == '':
+                print "Invalid input."
+            else:
+                the_db = Bdb(dbLocation)
+                bc = int(bc)
+                book_lend = the_db.retrieve_book(bc)
+                book_lend = create_book_from_list(book_lend)
+
+                due_date = datetime.date.today() + datetime.timedelta(days=30)
+                user_date = raw_input("When is it due? [" + str(due_date) + "]: ") # assumptions
+                if user_date.strip() == "":
+                    loan = Loan(-1, book_lend, lend_person, datetime.date.today(), due_date, False)
+                    the_db.store_loan(loan)
+                else:
+                    user_date = user_date.strip()
+                    user_date = datetime.datetime.strptime(user_date, "%Y-%m-%d").date()
+                    loan = Loan(-1, book_lend, lend_person, datetime.date.today(), due_date, False)
+                    the_db.store_loan(loan)
+
+    elif todo.strip().lower() == 'y':
+        uid = raw_input("Ok, enter it now: ")
+        if uid.strip() == '':
+            print "Invalid input."
+        else:
+            uid = int(uid)
+            the_db = Bdb(dbLocation)
+            lend_person = the_db.retrieve_person(uid)
+            lend_person = create_person_from_list(lend_person)
+            print "Which book would you like to lend?"
+            todo = raw_input("Do you have its barcode? [y/N]: ")
+            if todo.strip() == "" or todo.strip().lower() == 'n':
+                pass
+
+            elif todo.strip().lower() == 'y':
+                bc = raw_input("Ok, enter it now: ")
+                if bc.strip() == '':
+                    print "Invalid input."
+                else:
+                    bc = int(bc)
+                    book_lend = the_db.retrieve_book(bc)
+                    book_lend = create_book_from_list(book_lend)
+
+                    due_date = datetime.date.today() + datetime.timedelta(days=30)
+                    user_date = raw_input("When is it due? [" + str(due_date) + "]: ") # just going to assume it's in YYYY-MM-DD form for now.
+                    if user_date.strip() == "":
+                        loan = Loan(-1, book_lend, lend_person, datetime.date.today(), due_date, False)  # probably don't want user settable uid. remove from class?
+                        the_db.store_loan(loan)
+                    else:
+                        user_date = user_date.strip()
+                        user_date = datetime.datetime.strptime(user_date, "%Y-%m-%d").date()
+                        loan = Loan(-1, book_lend, lend_person, datetime.date.today(), due_date, False)
+                        the_db.store_loan(loan)
+
+
+def show_all_loans():
+    """
+    Note that this only shows currently active loans, i.e. not historical ones
+    """
+    theDB = Bdb(dbLocation)
+    for item in theDB.get_all_loans():
+        print item
+
 if __name__ == '__main__':
     dbLocation = read_config()
 
@@ -405,8 +563,9 @@ if __name__ == '__main__':
         3) Edit a book\n
         4) Search for a book\n
         5) Show all books\n
-        6) Change database location\n
-        7) Exit: ''')
+        6) Lending\n
+        7) Change database location\n
+        8) Exit: ''')
 
         try:
             todo = int(todo)
@@ -414,7 +573,7 @@ if __name__ == '__main__':
             print "Invalid input."
             continue
 
-        if todo < 1 or todo > 7:
+        if todo < 1 or todo > 8:
             print "Invalid input."
             continue
 
@@ -443,10 +602,47 @@ if __name__ == '__main__':
             show_all_books()
 
         elif todo == 6:
+            todo = raw_input('''Here's what you can do: \n
+            1) Lend a book (checkout)\n
+            2) Return a lent book (checkin)\n
+            3) Show currently lent books\n
+            4) Add a person (new patron/lendee)\n
+            5) Search for a person\n
+            5) Edit a person\n
+            6) Delete a person\n
+            7) Search historical transactions: ''')
+
+            try:
+                todo = int(todo)
+            except ValueError:
+                print "Invalid input."
+                continue
+
+            if todo == 1:
+                lend_book()
+            elif todo == 2:
+                pass
+            elif todo == 3:
+                show_all_loans()  # @TODO: This needs a nicer printout.
+            elif todo == 4:
+                add_person()
+            elif todo == 5:
+                search_people()
+            elif todo == 6:
+                pass
+            elif todo == 7:
+                pass
+            elif todo == 8:
+                pass
+            else:
+                print "Invalid choice."
+                continue
+
+        elif todo == 7:
             if 0 == change_db_location():
                 print "Changed successfully."
 
-        elif todo == 7:
+        elif todo == 8:
             print "So long, and thanks for all the fish!"
             run = False
 
