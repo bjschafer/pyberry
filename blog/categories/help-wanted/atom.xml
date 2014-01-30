@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Help Wanted | Pyberry]]></title>
+  <link href="http://braxton-schafer.github.io/pyberry/blog/categories/help-wanted/atom.xml" rel="self"/>
+  <link href="http://braxton-schafer.github.io/pyberry/"/>
+  <updated>2014-01-30T14:53:28-06:00</updated>
+  <id>http://braxton-schafer.github.io/pyberry/</id>
+  <author>
+    <name><![CDATA[Braxton Schafer]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Looking for Release Specialist]]></title>
+    <link href="http://braxton-schafer.github.io/pyberry/blog/2013/02/21/looking-for-release-specialist/"/>
+    <updated>2013-02-21T00:00:00-06:00</updated>
+    <id>http://braxton-schafer.github.io/pyberry/blog/2013/02/21/looking-for-release-specialist</id>
+    <content type="html"><![CDATA[<div class='post'>
+The Pyberry project is looking for a Release Specialist - somebody who knows how to package versions for release cross-platform. &nbsp;Because Pyberry is written in Python, an interpreted language, it can run on many platforms. &nbsp;We'd like to at least have packages for Windows, Mac OS X and Linux so that a user on these platforms can simply install/run it without having to worry about downloading Python as well.<br /><br />If you would be willing to do this or help out in any other way, please let me know! &nbsp;Feel free to browse the code at <a href="https://sourceforge.net/p/pyberry/code/?branch=ref%2Fdevelop" target="_blank" title="Development branch">SourceForge</a>. &nbsp;If you're interested, you can email me at <a href="mailto:braxton,schafer@users.sf.net" target="_blank">braxton.schafer@users.sf.net</a></div>
+
+]]></content>
+  </entry>
+  
+</feed>

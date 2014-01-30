@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Code | Pyberry]]></title>
+  <link href="http://braxton-schafer.github.io/pyberry/blog/categories/code/atom.xml" rel="self"/>
+  <link href="http://braxton-schafer.github.io/pyberry/"/>
+  <updated>2014-01-30T14:53:28-06:00</updated>
+  <id>http://braxton-schafer.github.io/pyberry/</id>
+  <author>
+    <name><![CDATA[Braxton Schafer]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Backport Complete!]]></title>
+    <link href="http://braxton-schafer.github.io/pyberry/blog/2013/06/06/backport-complete/"/>
+    <updated>2013-06-06T00:00:00-05:00</updated>
+    <id>http://braxton-schafer.github.io/pyberry/blog/2013/06/06/backport-complete</id>
+    <content type="html"><![CDATA[<div class='post'>
+I've just pushed version 0.4 of Pyberry to GitHub. &nbsp;It's a biggie! &nbsp;I've backported it from Python 3 to Python 2.7 in order to use Google API modules. &nbsp;Because of that, I was able to make searching by title work. &nbsp;I've additionally cleaned up the code quite a bit, fixed bugs I found going through it, etc. &nbsp;Check out the new release <a href="https://github.com/braxton-schafer/pyberry/tree/0.4" target="_blank" title="GitHub!">here</a>, at GitHub. &nbsp;Now that I've pushed past the mega issue, I'm looking forward to ramping up development.<br /><br />I set a (probably unrealistic) due date for version 0.5 (basically, where most features should be there so that it's purposeful) to be June 18, next Friday. &nbsp;I will work on it, but no guarantees about that milestone.<br /><br />By the way, I still (and always) need testers! &nbsp;If something doesn't work, just open an issue on GitHub and I'll do my best to fix it. &nbsp;This is very much a learning experience for me.</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Py3k to Python 2]]></title>
+    <link href="http://braxton-schafer.github.io/pyberry/blog/2013/05/29/py3k-to-python-2/"/>
+    <updated>2013-05-29T00:00:00-05:00</updated>
+    <id>http://braxton-schafer.github.io/pyberry/blog/2013/05/29/py3k-to-python-2</id>
+    <content type="html"><![CDATA[<div class='post'>
+Unfortunately, sometimes to move forward, you have to go backwards. &nbsp;In Pyberry, I'm in the process of moving all the code to Python 2, for library reasons. &nbsp;I've more than met my match in dealing with the data coming from the Google Books API, but Google provides a library to deal with it that's Python 2.x only. &nbsp;So, I've decided to backport my code.<br /><br />More details to come - right now, I'm having issues finding decent documentation on the gdata-python libraries, but it's still looking to be a lot easier.</div>
+
+]]></content>
+  </entry>
+  
+</feed>

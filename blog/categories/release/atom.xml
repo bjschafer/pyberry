@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: release | Pyberry]]></title>
+  <link href="http://braxton-schafer.github.io/pyberry/blog/categories/release/atom.xml" rel="self"/>
+  <link href="http://braxton-schafer.github.io/pyberry/"/>
+  <updated>2014-01-30T14:53:28-06:00</updated>
+  <id>http://braxton-schafer.github.io/pyberry/</id>
+  <author>
+    <name><![CDATA[Braxton Schafer]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Bugfix: 1.0.1]]></title>
+    <link href="http://braxton-schafer.github.io/pyberry/blog/2014/01/30/bugfix-1-dot-0-1.markdown/"/>
+    <updated>2014-01-30T14:42:00-06:00</updated>
+    <id>http://braxton-schafer.github.io/pyberry/blog/2014/01/30/bugfix-1-dot-0-1.markdown</id>
+    <content type="html"><![CDATA[<p>Yesterday I released version 1.0.1, which fixes some bugs I discovered while packaging and moves the config file and default database location to the proper applicaion data directory.</p>
+
+<p>This location is:
+* C:\Users\$USERNAME\AppData\Local\Braxton Schafer\Pyberry on Windows
+* /Users/$USERNAME/Library/Application Support/Pyberry on Mac
+* /home/$USERNAME/.local/share/Pyberry on Linux</p>
+
+<p>Additionally, there are packages available for Windows, Mac, and Linux, with no install necessary!  Just download from <a href="https://github.com/braxton-schafer/pyberry/releases/latest">here</a> and unzip.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Bugfix: 1.0.1]]></title>
+    <link href="http://braxton-schafer.github.io/pyberry/blog/2014/01/30/bugfix-1-dot-0-1/"/>
+    <updated>2014-01-30T14:42:00-06:00</updated>
+    <id>http://braxton-schafer.github.io/pyberry/blog/2014/01/30/bugfix-1-dot-0-1</id>
+    <content type="html"><![CDATA[<p>Yesterday I released version 1.0.1, which fixes some bugs I discovered while packaging and moves the config file and default database location to the proper application data directory.</p>
+
+<p>This location is:
+* C:\Users\$USERNAME\AppData\Local\Braxton Schafer\Pyberry on Windows
+* /Users/$USERNAME/Library/Application Support/Pyberry on Mac
+* /home/$USERNAME/.local/share/Pyberry on Linux</p>
+
+<p>Additionally, there are packages available for Windows, Mac, and Linux, with no install necessary!  Just download from <a href="https://github.com/braxton-schafer/pyberry/releases/latest">here</a> and unzip.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Major Release: 1.0]]></title>
+    <link href="http://braxton-schafer.github.io/pyberry/blog/2014/01/28/major-release-1-dot-0/"/>
+    <updated>2014-01-28T21:37:00-06:00</updated>
+    <id>http://braxton-schafer.github.io/pyberry/blog/2014/01/28/major-release-1-dot-0</id>
+    <content type="html"><![CDATA[<p>This is it, I&rsquo;ve done it.  I&rsquo;ve tagged and pushed release 1.0.  I&rsquo;ve done as much testing as I can figure, but there&rsquo;s surely still bugs.  If you find a bug, please report it on <a href="https://github.com/braxton-schafer/pyberry/issues?state=open">GitHub</a> so I can fix it!</p>
+
+<p>I also discovered the GitHub Releases feature, so I&rsquo;ll be phasing out the &ldquo;Downloads&rdquo; page of this website soon.</p>
+
+<p>Download Pyberry 1.0 <a href="https://github.com/braxton-schafer/pyberry/releases/tag/1.0">here</a>.</p>
+
+<p>I&rsquo;m very excited for this huge milestone for me (it&rsquo;s my first project to hit 1.0/be reasonably stable), so I hope it benefits somebody else.  I&rsquo;m always open to feature requests or people looking to help.  You can find various ways to contact me at <a href="http://bjschafer.com">my website</a>, or just fork or open an issue on GitHub.</p>
+
+<p>Thank you!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[OpenLibrary and 0.10]]></title>
+    <link href="http://braxton-schafer.github.io/pyberry/blog/2014/01/22/openlibrary-and-0-dot-10/"/>
+    <updated>2014-01-22T20:45:00-06:00</updated>
+    <id>http://braxton-schafer.github.io/pyberry/blog/2014/01/22/openlibrary-and-0-dot-10</id>
+    <content type="html"><![CDATA[<p>I was discovering a host of problems with the Google Books lookup, partially related to poor/inconsistent documentation.  So I made the decision to move to <a href="http://openlibrary.org">OpenLibrary</a> instead.  This necessitated a rewrite of much of the lookup code, and I took it as an opportunity to clean up and Pythonize a lot of the code relating to the lookup.</p>
+
+<p>With this change, I decided to tag release 0.10.  Yeah, I&rsquo;m one of those people.  This change is certainly bigger than a bugfix but I&rsquo;m not yet comfortable releasing 1.0.  So after 9 comes 10&hellip;</p>
+]]></content>
+  </entry>
+  
+</feed>
