@@ -4,7 +4,7 @@
   <title><![CDATA[Pyberry]]></title>
   <link href="http://braxton-schafer.github.io/pyberry/atom.xml" rel="self"/>
   <link href="http://braxton-schafer.github.io/pyberry/"/>
-  <updated>2014-01-30T14:58:52-06:00</updated>
+  <updated>2014-01-30T15:00:13-06:00</updated>
   <id>http://braxton-schafer.github.io/pyberry/</id>
   <author>
     <name><![CDATA[Braxton Schafer]]></name>
@@ -12,22 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Bugfix: 1.0.1]]></title>
-    <link href="http://braxton-schafer.github.io/pyberry/blog/2014/01/30/bugfix-1-dot-0-1.markdown/"/>
-    <updated>2014-01-30T14:42:00-06:00</updated>
-    <id>http://braxton-schafer.github.io/pyberry/blog/2014/01/30/bugfix-1-dot-0-1.markdown</id>
-    <content type="html"><![CDATA[Yesterday I released version 1.0.1, which fixes some bugs I discovered while packaging and moves the config file and default database location to the proper applicaion data directory.
-
-This location is:
-* C:\Users\$USERNAME\AppData\Local\Braxton Schafer\Pyberry on Windows
-* /Users/$USERNAME/Library/Application Support/Pyberry on Mac
-* /home/$USERNAME/.local/share/Pyberry on Linux
-
-Additionally, there are packages available for Windows, Mac, and Linux, with no install necessary!  Just download from [here](https://github.com/braxton-schafer/pyberry/releases/latest) and unzip.
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[Bugfix: 1.0.1]]></title>
