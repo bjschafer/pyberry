@@ -70,7 +70,7 @@ def search():
         if search_field in substitutions:
             search_field = substitutions[search_field]
         the_db = Bdb(dbLocation)
-        return the_db.search(search_field, search_term)
+        return the_db.search_book(search_field, search_term)
 
 
 def edit(edit_book):
@@ -103,10 +103,10 @@ def edit(edit_book):
     edit_book.remove_unicode()
     the_db = Bdb(dbLocation)
     if edit_book.bc is None:
-        the_db.store(edit_book)
+        the_db.store_book(edit_book)
     else:
-        the_db.delete(Book(old_bc))
-        the_db.store(edit_book)
+        the_db.delete_book(Book(old_bc))
+        the_db.store_book(edit_book)
 
 
 def print_logo():
@@ -193,7 +193,7 @@ def add_book():
         manual_book = create_book_from_dict(manual_add)
         manual_book.remove_unicode()
         book_db = Bdb(dbLocation)
-        book_db.store(manual_book)
+        book_db.store_book(manual_book)
 
     elif add_option == 2:
         isbn = raw_input("Please enter the 10 or 13 digit ISBN: ")
@@ -228,7 +228,7 @@ def add_book():
         else:
             book.remove_unicode()
             book_db = Bdb(dbLocation)
-            book_db.store(book)
+            book_db.store_book(book)
 
     elif add_option == 3:
         title = raw_input("Please enter the title you'd like to search for:")
@@ -284,7 +284,7 @@ def add_book():
         else:
             book.remove_unicode()
             book_db = Bdb(dbLocation)
-            book_db.store(book)
+            book_db.store_book(book)
 
 
 def delete_book():
@@ -302,7 +302,7 @@ def delete_book():
         del_me = del_me.split(",")
         del_me = Book(del_me[0])  # this is really fudged atm.  serious testing needed
         the_db = Bdb(dbLocation)
-        the_db.delete(del_me)
+        the_db.delete_book(del_me)
         print "Deleted."
 
     elif to_do.strip().lower() == "y":
@@ -313,7 +313,7 @@ def delete_book():
             del_me = int(del_me)
             del_me = Book(del_me)
             the_db = Bdb(dbLocation)
-            the_db.delete(del_me)
+            the_db.delete_book(del_me)
             print "Deleted."
 
 
@@ -339,7 +339,7 @@ def edit_book():
         else:
             edit_choice = int(edit_choice)
             the_db = Bdb(dbLocation)
-            edit_choice = the_db.retrieve(edit_choice)
+            edit_choice = the_db.retrieve_book(edit_choice)
             edit_choice = create_book_from_list(edit_choice)  # might not need this?
             edit(edit_choice)
 
@@ -356,7 +356,7 @@ def search_book():
 
 def show_all_books():
     the_db = Bdb(dbLocation)
-    for item in the_db.get_all():
+    for item in the_db.get_all_books():
         print item
     raw_input("Press any key to continue.")
 

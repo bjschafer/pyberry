@@ -18,8 +18,10 @@ class Bdb(object):
         @param location: the file location of the database
         """
 
-        self.fields = ["bc", "isbn", "title", "authors", "pages", "publ_year",
-                       "publisher", "location", "description", "call_num", "tags"]
+        self.book_fields = ["bc", "isbn", "title", "authors", "pages", "publ_year",
+                            "publisher", "location", "description", "call_num", "tags"]
+        self.person_fields = ["id", "first_name", "last_name", "email", "phone_num", "address", "city", "state", "notes"]
+
         assert isinstance(location, basestring)
         self.conn = sqlite.connect(location)
         self.conn.text_factory = str
@@ -38,10 +40,30 @@ class Bdb(object):
         tags TEXT)''')  # not sure how the tags will store.  they're an array and although they
         # should go in there correctly, there's no telling how they'll come out.  i'll have
         # to check it out.
+
+        c.execute('''CREATE TABLE IF NOT EXISTS people
+        (id INTEGER PRIMARY KEY,
+        first_name TEXT,
+        last_name TEXT,
+        email TEXT,
+        phone_num TEXT,
+        address TEXT,
+        city TEXT,
+        state TEXT,
+        notes TEXT)''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS loans
+        (id INTEGER PRIMARY KEY,
+        book INTEGER,
+        person INTEGER,
+        issue_date TEXT,
+        due_date TEXT,
+        is_historical INTEGER(1))''')
+
         self.conn.commit()
         c.close()
 
-    def store(self, book):
+    def store_book(self, book):
         """
         Store the given book object in the database.
 
@@ -66,7 +88,7 @@ class Bdb(object):
         self.conn.commit()
         c.close()
 
-    def delete(self, book):
+    def delete_book(self, book):
         """
         Delete a book in the database
         @param book: book object to delete
@@ -76,7 +98,7 @@ class Bdb(object):
         c.execute('''DELETE FROM books WHERE bc=?''', (book.bc,))
         self.conn.commit()
 
-    def retrieve(self, bc):
+    def retrieve_book(self, bc):
         """
         Retrieve a book given barcode/unique id.
         @param bc: the book's barcode to fetch
@@ -87,7 +109,7 @@ class Bdb(object):
         c.execute('''SELECT * FROM books WHERE bc=?''', (bc,))
         return c.fetchone()
 
-    def search(self, field, term):
+    def search_book(self, field, term):
         """
         Search for records given field to search and term to search for.
 
@@ -100,7 +122,7 @@ class Bdb(object):
         to insert the field.
         """
 
-        if field not in self.fields:
+        if field not in self.book_fields:
             return -1
 
         else:
@@ -116,7 +138,7 @@ class Bdb(object):
             c.execute('''SELECT * FROM books WHERE {} LIKE ?'''.format(field), (term,))
             return c.fetchall()
 
-    def get_all(self):
+    def get_all_books(self):
         """
         Fetch a list of all items in the database.
 
@@ -125,4 +147,64 @@ class Bdb(object):
 
         c = self.conn.cursor()
         c.execute('''SELECT * FROM books''')
-        return c.fetchall()        
+        return c.fetchall()
+
+    def store_person(self, person):
+        c = self.conn.cursor()
+        t = person.get_list_representation()
+
+        if t[0] == -1 or t[0] == '-1':
+            del t[0]
+            t = tuple(t)
+            c.execute('''INSERT OR REPLACE INTO people (first_name, last_name, email, phone_num, address, city, state, notes)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', t)
+        else:
+            t = tuple(t)
+            c.execute('''INSERT OR REPLACE INTO people VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''', t)
+
+        self.conn.commit()
+        c.close()
+
+    def retrieve_person(self, uid):
+        c = self.conn.cursor()
+        c.execute('''SELECT * FROM people WHERE id=?''', (uid,))
+        return c.fetchone()
+
+    def search_person(self, field, term):
+        if field not in self.person_fields:
+            return -1
+
+        else:
+            term = '%' + term + '%'
+
+            c = self.conn.cursor()
+
+            c.execute('''SELECT * FROM people WHERE {} LIKE ?'''.format(field),(term,))
+            return c.fetchall()
+
+    def store_loan(self, loan):
+        c = self.conn.cursor()
+        l = loan.get_list_representation()
+
+        l[1] = l[1].bc
+        l[2] = l[2].uid
+        l[-1] = 0 if True else 1 # for some reason this needs to be backwards...
+
+        if l[0] == -1 or l[0] == '-1':
+            del l[0]
+            l = tuple(l)
+            c.execute('''INSERT OR REPLACE INTO loans (book, person, issue_date, due_date, is_historical) VALUES (?, ?, ?, ?, ?)''', l)
+        else:
+            l = tuple(l)
+            c.execute('''INSERT OR REPLACE INTO loans VALUES (?, ?, ?, ?, ?, ?)''', l)
+
+        self.conn.commit()
+        c.close()
+
+    def get_all_loans(self):
+        c = self.conn.cursor()
+        c.execute('''SELECT loans.id, books.title, people.first_name, people.last_name FROM loans
+                     JOIN books ON loans.book=books.bc
+                     JOIN people on loans.person=people.id
+                     WHERE loans.is_historical=0''')
+        return c.fetchall()
