@@ -444,8 +444,7 @@ def lend_book():
     todo = raw_input("Do you have their unique ID? [y/N]: ")
     if todo.strip() == "" or todo.strip().lower() == 'n':
         results = search_people()
-        i = 1
-        for item in results:
+        for i, item in enumerate(results):
             print (str(i) + ") " + str(item)) # not sure how this will come out, same as above.
         lend_person = raw_input("Who is it? ")
 
@@ -513,9 +512,30 @@ def lend_book():
             print "Which book would you like to lend?"
             todo = raw_input("Do you have its barcode? [y/N]: ")
             if todo.strip() == "" or todo.strip().lower() == 'n':
-                pass
+                results = search_book_helper()
+                for i, item in enumerate(results):
+                    print str(i) + ") " + str(item)
+                book_lend = raw_input("Which one is it? ")
 
-            elif todo.strip().lower() == 'y':
+                book_lend = int(book_lend)
+                book_lend = results[book_lend - 1]
+                book_lend = list(book_lend)
+                book_lend = create_book_from_list(book_lend)
+
+                the_db = Bdb(dbLocation)
+
+                due_date = datetime.date.today() + datetime.timedelta(days=30)
+                user_date = raw_input("When is it due? [" + str(due_date) + "]: ")
+                if user_date.strip() == "":
+                    loan = Loan(-1, book_lend, lend_person, datetime.date.today(), due_date, False)
+                    the_db.store_loan(loan)
+                else:
+                    user_date = user_date.strip()
+                    user_date = datetime.datetime.strptime(user_date, "%Y-%m-%d").date()
+                    loan = Loan(-1, book_lend, lend_person, datetime.date.today(), due_date, False)
+                    the_db.store_loan(loan)
+
+            elif 'y' == todo.strip().lower():
                 bc = raw_input("Ok, enter it now: ")
                 if bc.strip() == '':
                     print "Invalid input."
@@ -543,6 +563,34 @@ def show_all_loans():
     theDB = Bdb(dbLocation)
     for item in theDB.get_all_loans():
         print item
+    raw_input("Press any key to continue.")
+
+
+def edit_person():
+    print "Who would you like to edit?"
+    todo = raw_input("Do you have their unique ID? [y/N]: ")
+    if todo.strip() == "" or todo.strip().lower() == 'n':
+        results = search_people()
+        i = 1
+        for item in results:
+            print (str(i) + ") " + str(item)) # not sure how this will come out, same as above.
+        lend_person = raw_input("Who is it? ")
+
+        lend_person = int(lend_person)
+        lend_person = results[lend_person - 1]
+        lend_person = list(lend_person)
+        lend_person = create_person_from_list(lend_person)
+
+    elif todo.strip().lower() == 'y':
+        uid = raw_input("Ok, enter it now: ")
+        if uid.strip() == '':
+            print "Invalid input."
+        else:
+            uid = int(uid)
+            the_db = Bdb(dbLocation)
+            lend_person = the_db.retrieve_person(uid)
+            lend_person = create_person_from_list(lend_person)
+
 
 if __name__ == '__main__':
     dbLocation = read_config()
@@ -605,9 +653,10 @@ if __name__ == '__main__':
             3) Show currently lent books\n
             4) Add a person (new patron/lendee)\n
             5) Search for a person\n
-            5) Edit a person\n
-            6) Delete a person\n
-            7) Search historical transactions: ''')
+            6) Edit a person\n
+            7) Delete a person\n
+            8) Search historical transactions\n
+            9) Go back: ''')
 
             try:
                 todo = int(todo)
@@ -630,6 +679,8 @@ if __name__ == '__main__':
             elif todo == 7:
                 pass
             elif todo == 8:
+                pass
+            elif todo == 9:
                 pass
             else:
                 print "Invalid choice."
