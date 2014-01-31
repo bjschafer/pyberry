@@ -356,8 +356,6 @@ def search_book():
         print "Returning you to the beginning"
         return
     i = 1
-    for item in results:
-        print str(i) + ") " + str(item)
 
 
 def show_all_books():
@@ -457,12 +455,11 @@ def lend_book():
         lend_person = create_person_from_list(lend_person)
 
         print "Which book would you like to lend?"
-        todo = raw_input("Do you have its barcode? [y/N]: ")
-        if todo.strip == "" or todo.strip().lower() == 'n':
+        to_do = raw_input("Do you have its barcode? [y/N]: ")
+        if to_do.strip() == "" or to_do.strip().lower() == 'n':
             results = search_book_helper()
-            i = 1
             for item in results:
-                print (str(i) + ") " + str(item))
+                print str(i) + ") " + str(item)
             book_lend = raw_input("Which one is it? ")
 
             book_lend = int(book_lend)
