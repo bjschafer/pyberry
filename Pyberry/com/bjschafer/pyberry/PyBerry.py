@@ -361,10 +361,9 @@ def show_all_books():
     raw_input("Press any key to continue.")
 
 
-def change_db_location():
+def change_db_location(loc):
     config = ConfigParser.RawConfigParser()
     config.read('.pyberry')
-    loc = config.get('local', 'dbPath')
     print "Current location is %s" % loc
     change_it = raw_input("Would you like to change it? [y/N]: ")
 
@@ -443,7 +442,7 @@ if __name__ == '__main__':
             show_all_books()
 
         elif todo == 6:
-            if 0 == change_db_location():
+            if 0 == change_db_location(dbLocation):
                 print "Changed successfully."
 
         elif todo == 7:
