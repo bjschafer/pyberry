@@ -389,6 +389,18 @@ def change_db_location():
         return 0
 
 
+def debug_menu():
+    print "Hi, this is a secret.  What can I let you in on? "
+    dbg = raw_input('''1) Config file location''')
+    try:
+        dbg = int(dbg)
+    except ValueError:
+        return
+
+    if dbg == 1:
+        print appdirs.user_data_dir("Pyberry", "Braxton Schafer")
+
+
 if __name__ == '__main__':
     dbLocation = read_config()
 
@@ -414,7 +426,7 @@ if __name__ == '__main__':
             print "Invalid input."
             continue
 
-        if todo < 1 or todo > 7:
+        if todo < 1 or (todo > 7 and todo != 42):
             print "Invalid input."
             continue
 
@@ -449,6 +461,9 @@ if __name__ == '__main__':
         elif todo == 7:
             print "So long, and thanks for all the fish!"
             run = False
+
+        elif todo == 42:
+            debug_menu()
 
         else:
             print "Invalid choice"
