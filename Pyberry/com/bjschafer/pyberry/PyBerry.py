@@ -14,7 +14,7 @@ substitutions = {"barcode": "bc", "number of pages": "pages", "publication year"
 
 
 def write_config():
-    config_path = appdirs.user_data_dir("Pyberry")
+    config_path = appdirs.user_data_dir("Pyberry", "Braxton Schafer")
     if sys.platform == 'win32' or sys.platform == 'win64':
         config_path += '''\\'''
     else:
@@ -29,7 +29,7 @@ def write_config():
 
 
 def read_config():
-    config_path = appdirs.user_data_dir("Pyberry")
+    config_path = appdirs.user_data_dir("Pyberry", "Braxton Schafer")
     if sys.platform == 'win32' or sys.platform == 'win64':
         config_path += '''\\'''
     else:
