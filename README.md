@@ -4,7 +4,7 @@ Pyberry is open source library management (i.e. books, etc.) software, written i
 
 Pyberry is looking for a release specialist! Do you know how to package versions for release across platforms? Then please, help us out!
 
-Copyright © 2012-2013 Braxton Schafer
+Copyright © 2012-2014 Braxton Schafer
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
