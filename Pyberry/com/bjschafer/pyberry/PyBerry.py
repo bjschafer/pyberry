@@ -14,7 +14,7 @@ substitutions = {"barcode": "bc", "number of pages": "pages", "publication year"
 
 
 def write_config():
-    config_path = appdirs.user_data_dir("Pyberry")
+    config_path = appdirs.user_data_dir("Pyberry", "Braxton Schafer")
     if sys.platform == 'win32' or sys.platform == 'win64':
         config_path += '''\\'''
     else:
@@ -29,7 +29,7 @@ def write_config():
 
 
 def read_config():
-    config_path = appdirs.user_data_dir("Pyberry")
+    config_path = appdirs.user_data_dir("Pyberry", "Braxton Schafer")
     if sys.platform == 'win32' or sys.platform == 'win64':
         config_path += '''\\'''
     else:
@@ -361,10 +361,9 @@ def show_all_books():
     raw_input("Press any key to continue.")
 
 
-def change_db_location():
+def change_db_location(loc):
     config = ConfigParser.RawConfigParser()
     config.read('.pyberry')
-    loc = config.get('local', 'dbPath')
     print "Current location is %s" % loc
     change_it = raw_input("Would you like to change it? [y/N]: ")
 
@@ -387,6 +386,18 @@ def change_db_location():
         with open('.pyberry', 'wb') as configFile:
             config.write(configFile)
         return 0
+
+
+def debug_menu():
+    print "Hi, this is a secret.  What can I let you in on? "
+    dbg = raw_input('''1) Config file location''')
+    try:
+        dbg = int(dbg)
+    except ValueError:
+        return
+
+    if dbg == 1:
+        print appdirs.user_data_dir("Pyberry", "Braxton Schafer")
 
 
 if __name__ == '__main__':
@@ -414,7 +425,7 @@ if __name__ == '__main__':
             print "Invalid input."
             continue
 
-        if todo < 1 or todo > 7:
+        if todo < 1 or (todo > 7 and todo != 42):
             print "Invalid input."
             continue
 
@@ -443,12 +454,15 @@ if __name__ == '__main__':
             show_all_books()
 
         elif todo == 6:
-            if 0 == change_db_location():
+            if 0 == change_db_location(dbLocation):
                 print "Changed successfully."
 
         elif todo == 7:
             print "So long, and thanks for all the fish!"
             run = False
+
+        elif todo == 42:
+            debug_menu()
 
         else:
             print "Invalid choice"
