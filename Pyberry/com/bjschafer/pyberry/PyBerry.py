@@ -20,7 +20,7 @@ person_substitutions = {"unique id": "id", "first name": "first_name", "last nam
 
 
 def write_config():
-    config_path = appdirs.user_data_dir("Pyberry")
+    config_path = appdirs.user_data_dir("Pyberry", "Braxton Schafer")
     if sys.platform == 'win32' or sys.platform == 'win64':
         config_path += '''\\'''
     else:
@@ -35,7 +35,7 @@ def write_config():
 
 
 def read_config():
-    config_path = appdirs.user_data_dir("Pyberry")
+    config_path = appdirs.user_data_dir("Pyberry", "Braxton Schafer")
     if sys.platform == 'win32' or sys.platform == 'win64':
         config_path += '''\\'''
     else:
@@ -365,10 +365,9 @@ def show_all_books():
     raw_input("Press any key to continue.")
 
 
-def change_db_location():
+def change_db_location(loc):
     config = ConfigParser.RawConfigParser()
     config.read('.pyberry')
-    loc = config.get('local', 'dbPath')
     print "Current location is %s" % loc
     change_it = raw_input("Would you like to change it? [y/N]: ")
 
@@ -393,6 +392,7 @@ def change_db_location():
         return 0
 
 
+<<<<<<< HEAD
 def create_person_from_list(person_list):
     person = Person(person_list[0], person_list[1], person_list[2], person_list[3], person_list[4], person_list[5],
                     person_list[7], person_list[8])
@@ -590,6 +590,18 @@ def edit_person():
             the_db = Bdb(dbLocation)
             lend_person = the_db.retrieve_person(uid)
             lend_person = create_person_from_list(lend_person)
+=======
+def debug_menu():
+    print "Hi, this is a secret.  What can I let you in on? "
+    dbg = raw_input('''1) Config file location''')
+    try:
+        dbg = int(dbg)
+    except ValueError:
+        return
+
+    if dbg == 1:
+        print appdirs.user_data_dir("Pyberry", "Braxton Schafer")
+>>>>>>> develop
 
 
 if __name__ == '__main__':
@@ -618,7 +630,11 @@ if __name__ == '__main__':
             print "Invalid input."
             continue
 
+<<<<<<< HEAD
         if todo < 1 or todo > 8:
+=======
+        if todo < 1 or (todo > 7 and todo != 42):
+>>>>>>> develop
             print "Invalid input."
             continue
 
@@ -647,6 +663,7 @@ if __name__ == '__main__':
             show_all_books()
 
         elif todo == 6:
+<<<<<<< HEAD
             todo = raw_input('''Here's what you can do: \n
             1) Lend a book (checkout)\n
             2) Return a lent book (checkin)\n
@@ -688,11 +705,17 @@ if __name__ == '__main__':
 
         elif todo == 7:
             if 0 == change_db_location():
+=======
+            if 0 == change_db_location(dbLocation):
+>>>>>>> develop
                 print "Changed successfully."
 
         elif todo == 8:
             print "So long, and thanks for all the fish!"
             run = False
+
+        elif todo == 42:
+            debug_menu()
 
         else:
             print "Invalid choice"
