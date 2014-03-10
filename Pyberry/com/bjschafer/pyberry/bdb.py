@@ -20,7 +20,7 @@ class Bdb(object):
 
         self.fields = ["bc", "isbn", "title", "authors", "pages", "publ_year",
                        "publisher", "location", "description", "call_num", "tags"]
-        assert isinstance(location, basestring)
+        assert isinstance(location, str)
         self.conn = sqlite.connect(location)
         self.conn.text_factory = str
         c = self.conn.cursor()
