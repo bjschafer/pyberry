@@ -1,4 +1,4 @@
-import urllib2
+import urllib.request
 import simplejson
 from book import Book  # right?  it's in this package
 
@@ -75,7 +75,7 @@ class Lookup(object):
 
         if len(isbn) != 10 and len(isbn) != 13:
             raise ValueError
-        url = urllib2.urlopen(self.lookup_url+"ISBN"+":%s&jscmd=data&format=json" % isbn)
+        url = urllib.request.urlopen(self.lookup_url+"ISBN"+":%s&jscmd=data&format=json" % isbn)
         data = simplejson.load(url)['%s:%s' % ("ISBN", isbn)]
         book = self._get_book_from_json_dict(data)
         book.isbn = isbn
@@ -89,7 +89,7 @@ class Lookup(object):
         @return: the raw data of all results
         """
         title = title.replace(' ', '+').lower()
-        url = urllib2.urlopen(self.search_url+'title='+title)
+        url = urllib.request.urlopen(self.search_url+'title='+title)
         data = simplejson.load(url)['docs']
 
         for result in data:
