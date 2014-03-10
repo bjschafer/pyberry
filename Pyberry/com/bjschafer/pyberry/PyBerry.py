@@ -392,7 +392,6 @@ def change_db_location(loc):
         return 0
 
 
-<<<<<<< HEAD
 def create_person_from_list(person_list):
     person = Person(person_list[0], person_list[1], person_list[2], person_list[3], person_list[4], person_list[5],
                     person_list[7], person_list[8])
@@ -590,7 +589,8 @@ def edit_person():
             the_db = Bdb(dbLocation)
             lend_person = the_db.retrieve_person(uid)
             lend_person = create_person_from_list(lend_person)
-=======
+
+
 def debug_menu():
     print "Hi, this is a secret.  What can I let you in on? "
     dbg = raw_input('''1) Config file location''')
@@ -601,7 +601,6 @@ def debug_menu():
 
     if dbg == 1:
         print appdirs.user_data_dir("Pyberry", "Braxton Schafer")
->>>>>>> develop
 
 
 if __name__ == '__main__':
@@ -630,11 +629,7 @@ if __name__ == '__main__':
             print "Invalid input."
             continue
 
-<<<<<<< HEAD
-        if todo < 1 or todo > 8:
-=======
-        if todo < 1 or (todo > 7 and todo != 42):
->>>>>>> develop
+        if todo < 1 or (todo > 8 and todo != 42):
             print "Invalid input."
             continue
 
@@ -663,7 +658,6 @@ if __name__ == '__main__':
             show_all_books()
 
         elif todo == 6:
-<<<<<<< HEAD
             todo = raw_input('''Here's what you can do: \n
             1) Lend a book (checkout)\n
             2) Return a lent book (checkin)\n
@@ -704,10 +698,7 @@ if __name__ == '__main__':
                 continue
 
         elif todo == 7:
-            if 0 == change_db_location():
-=======
             if 0 == change_db_location(dbLocation):
->>>>>>> develop
                 print "Changed successfully."
 
         elif todo == 8:
