@@ -100,7 +100,6 @@ def edit(edit_book):
                    new_book['pages'], new_book['publ_year'], new_book['publisher'],
                    new_book['location'], new_book['description'], new_book['call_num'],
                    new_book['tags'])
-    edit_book.remove_unicode()
     the_db = Bdb(dbLocation)
     if edit_book.bc is None:
         the_db.store(edit_book)
@@ -191,7 +190,6 @@ def add_book():
                 manual_add[substitutions[item]] = manual_add.pop(item)
 
         manual_book = create_book_from_dict(manual_add)
-        manual_book.remove_unicode()
         book_db = Bdb(dbLocation)
         book_db.store(manual_book)
 
@@ -226,7 +224,6 @@ def add_book():
         if is_ok != "":  # not 100% sure this will work
             raise ValueError
         else:
-            book.remove_unicode()
             book_db = Bdb(dbLocation)
             book_db.store(book)
 
@@ -282,7 +279,6 @@ def add_book():
         if is_ok != "":
             raise ValueError  # should consider changing to a UserQuit exception.
         else:
-            book.remove_unicode()
             book_db = Bdb(dbLocation)
             book_db.store(book)
 
