@@ -74,7 +74,7 @@ def search():
 
 
 def edit(edit_book):
-    print(''''I'm going to show you each element of the book.  If you don't want
+    print('''I'm going to show you each element of the book.  If you don't want
               to change it, just press enter.  Otherwise, enter a new value.
               For multiple authors and tags, separate them by a comma.
               e.g. author1,author2,author3''')
@@ -106,6 +106,7 @@ def edit(edit_book):
     else:
         the_db.delete(Book(old_bc))
         the_db.store(edit_book)
+    print("Success!")
 
 
 def print_logo():
@@ -366,7 +367,7 @@ def change_db_location(loc):
     if change_it.strip().lower() != 'y':
         return
     else:
-        new_loc = input(''''Please enter a new path, either relative to current directory\n
+        new_loc = input('''Please enter a new path, either relative to current directory\n
         or an absolute path.  I'll fail if there's a permissions issue, though.\n
         Current path %s''' % loc)
 
