@@ -1,4 +1,3 @@
-import unicodedata
 
 
 class Book(object):
@@ -71,36 +70,22 @@ class Book(object):
             self.description = myList[8]
             self.call_num = myList[9]
             self.tags = myList[10]
-            
-    def remove_unicode(self):
-        """
-        Remove unicode in this book.
-
-        Remove the unicode in this book by normalizing it to ASCII.  This eliminates the obnoxious u'
-        """
-
-        self.title = unicodedata.normalize('NFKD', unicode(self.title)).encode('ascii','ignore')
-        self.authors = unicodedata.normalize('NFKD', unicode(self.authors)).encode('ascii','ignore')
-        self.publisher = unicodedata.normalize('NFKD', unicode(self.publisher)).encode('ascii','ignore')
-        self.location = unicodedata.normalize('NFKD', unicode(self.location)).encode('ascii','ignore')
-        self.description = unicodedata.normalize('NFKD', unicode(self.description)).encode('ascii','ignore')
-        self.call_num = unicodedata.normalize('NFKD', unicode(self.call_num)).encode('ascii','ignore')
 
     def print_check(self):
         """
         Print an easy way to check if everything is acceptable before e.g. storing in the DB.
         """
-        print "Barcode: " + str(self.bc)
-        print "ISBN: " + str(self.isbn)
-        print "Title: " + str(self.title)
-        print "Authors: " + str(self.authors)
-        print "Pages: " + str(self.pages)
-        print "Publication Year: " + str(self.publ_year)
-        print "Publisher: " + str(self.publisher)
-        print "Location: " + str(self.location)
-        print "Description: " + str(self.description)
-        print "Call Number: " + str(self.call_num)
-        print "Tags: " + str(self.tags)
+        print(("Barcode: " + str(self.bc)))
+        print(("ISBN: " + str(self.isbn)))
+        print(("Title: " + str(self.title)))
+        print(("Authors: " + str(self.authors)))
+        print(("Pages: " + str(self.pages)))
+        print(("Publication Year: " + str(self.publ_year)))
+        print(("Publisher: " + str(self.publisher)))
+        print(("Location: " + str(self.location)))
+        print(("Description: " + str(self.description)))
+        print(("Call Number: " + str(self.call_num)))
+        print(("Tags: " + str(self.tags)))
 
     def __str__(self):
         return self.title + " by: " + self.authors

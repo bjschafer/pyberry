@@ -19,10 +19,10 @@ class Bdb(object):
         """
 
         self.book_fields = ["bc", "isbn", "title", "authors", "pages", "publ_year",
-                            "publisher", "location", "description", "call_num", "tags"]
+                       "publisher", "location", "description", "call_num", "tags"]
         self.person_fields = ["id", "first_name", "last_name", "email", "phone_num", "address", "city", "state", "notes"]
 
-        assert isinstance(location, basestring)
+        assert isinstance(location, str)
         self.conn = sqlite.connect(location)
         self.conn.text_factory = str
         c = self.conn.cursor()
@@ -188,7 +188,7 @@ class Bdb(object):
 
         l[1] = l[1].bc
         l[2] = l[2].uid
-        l[-1] = 0 if True else 1 # for some reason this needs to be backwards...
+        l[-1] = 0 if True else 1  # for some reason this needs to be backwards...
 
         if l[0] == -1 or l[0] == '-1':
             del l[0]
