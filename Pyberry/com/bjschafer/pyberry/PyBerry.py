@@ -85,27 +85,27 @@ def edit_book_helper(edit_bk):
               For multiple authors and tags, separate them by a comma.
               e.g. author1,author2,author3''')
     new_book = {}
-    new_book['barcode'] = eval(input("Barcode: " + str(edit_book.bc)))
-    new_book['isbn'] = eval(input("ISBN: " + str(edit_book.isbn)))
-    new_book['title'] = eval(input("Title: " + str(edit_book.title)))  # doesn't pull info for anything below.
-    new_book['authors'] = eval(input("Authors: " + str(edit_book.authors)))
-    new_book['pages'] = eval(input("Number of Pages: " + str(edit_book.pages)))
-    new_book['publ_year'] = eval(input("Publication Year: " + str(edit_book.publ_year)))
-    new_book['publisher'] = eval(input("Publisher: " + str(edit_book.publisher)))
-    new_book['location'] = eval(input("Location: " + str(edit_book.location)))
-    new_book['description'] = eval(input("Description: " + str(edit_book.description)))
-    new_book['call_num'] = eval(input("Call number: " + str(edit_book.call_num)))
-    new_book['tags'] = eval(input("Tags: " + str(edit_book.tags)))
+    new_book['barcode'] = input("Barcode: " + str(edit_bk.bc))
+    new_book['isbn'] = input("ISBN: " + str(edit_bk.isbn))
+    new_book['title'] = input("Title: " + str(edit_bk.title))  # doesn't pull info for anything below.
+    new_book['authors'] = input("Authors: " + str(edit_bk.authors))
+    new_book['pages'] = input("Number of Pages: " + str(edit_bk.pages))
+    new_book['publ_year'] = input("Publication Year: " + str(edit_bk.publ_year))
+    new_book['publisher'] = input("Publisher: " + str(edit_bk.publisher))
+    new_book['location'] = input("Location: " + str(edit_bk.location))
+    new_book['description'] = input("Description: " + str(edit_bk.description))
+    new_book['call_num'] = input("Call number: " + str(edit_bk.call_num))
+    new_book['tags'] = input("Tags: " + str(edit_bk.tags))
 
     for key, value in list(new_book.items()):
         if value == '':
             new_book[key] = None
 
-    old_bc = edit_book.bc # we need this to ensure we don't create a duplicate db entry
-    edit_book.edit(new_book['barcode'], new_book['isbn'], new_book['title'], new_book['authors'],
-                   new_book['pages'], new_book['publ_year'], new_book['publisher'],
-                   new_book['location'], new_book['description'], new_book['call_num'],
-                   new_book['tags'])
+    old_bc = edit_bk.bc  # we need this to ensure we don't create a duplicate db entry
+    edit_bk.edit(new_book['barcode'], new_book['isbn'], new_book['title'], new_book['authors'],
+                 new_book['pages'], new_book['publ_year'], new_book['publisher'],
+                 new_book['location'], new_book['description'], new_book['call_num'],
+                 new_book['tags'])
     the_db = Bdb(dbLocation)
     if edit_bk.bc is None:
         the_db.store_book(edit_bk)
@@ -113,6 +113,37 @@ def edit_book_helper(edit_bk):
         the_db.delete_book(Book(old_bc))
         the_db.store_book(edit_bk)
         print("Success")
+
+def edit_person_helper(edit_p):
+    print('''I'm going to show you each element of the person.  If you don't want
+              to change it, just press enter.  Otherwise, enter a new value.''')
+    new_person = {}
+    new_person['uid'] = input("Unique ID: " + str(edit_p.uid))
+    new_person['first_name'] = input("First Name: " + str(edit_p.first_name))
+    new_person['last_name'] = input("Last Name: " + str(edit_p.last_name))
+    new_person['email'] = input("Email: " + str(edit_p.email))
+    new_person['phone_num'] = input("Phone Number: " + str(edit_p.phone_num))
+    new_person['address'] = input("Address: " + str(edit_p.address))
+    new_person['city'] = input("City: " + str(edit_p.city))
+    new_person['state'] = input("State: " + str(edit_p.state))
+    new_person['notes'] = input("Notes: " + str(edit_p.notes))
+
+    for key, value in new_person.items():
+        if value == '':
+            new_person[key] = None
+
+    old_uid = edit_p.bc  # for no duplicate db entry, see above.
+    edit_p.edit(new_person['uid'], new_person['first_name'], new_person['last_name'], new_person['email'],
+                new_person['phone_num'], new_person['address'], new_person['city'], new_person['state'],
+                new_person['notes'])
+    db = Bdb(dbLocation)
+    if edit_p.uid is None:
+        db.store_person(edit_p)
+    else:
+        db.delete_person(Person(old_uid))
+        db.store_person(edit_p)
+        print("Success")
+
 
 
 def print_logo():
@@ -189,7 +220,7 @@ def add_book():
         print("e.g. author1,author2,author3")
         print("To autogenerate a barcode, enter -1 for it.")
         print()
-        for item in terms:
+        for item in book_terms:
             manual_add[item] = eval(input("Please enter the " + item + ": "))
 
         for item in manual_add:
@@ -238,7 +269,7 @@ def add_book():
         title = eval(input("Please enter the title you'd like to search for:"))
         lookup = Lookup()
         eval(input("The following are the results.  Please enter the number of the " +
-                  "result you'd like.  Press any key to display them."))
+                   "result you'd like.  Press any key to display them."))
         books = []
         for index, book in enumerate(lookup.by_title(title), start=1):
             if index == 11:
@@ -418,7 +449,8 @@ def add_person():
 
 def search_people():
     print("Welcome to searching!")
-    print('''You can search by: unique id, first name, last name, email, phone number, address, city, state, or notes.''')
+    print('''You can search by: unique id, first name, last name, email, phone number, address, city, state,
+    or notes.''')
     search_field = input("Which would you like to search by? ")
     search_field = search_field.lower()
     search_term = input("OK, go ahead: ")
@@ -432,8 +464,8 @@ def search_people():
     else:
         if search_field in person_substitutions:
             search_field = person_substitutions[search_field]
-            theDB = Bdb(dbLocation)
-            return theDB.search_person(search_field, search_term)
+            the_db = Bdb(dbLocation)
+            return the_db.search_person(search_field, search_term)
 
 
 def lend_book():
@@ -442,7 +474,7 @@ def lend_book():
     if todo.strip() == "" or todo.strip().lower() == 'n':
         results = search_people()
         for i, item in enumerate(results):
-            print((str(i) + ") " + str(item))) # not sure how this will come out, same as above.
+            print((str(i) + ") " + str(item)))  # not sure how this will come out, same as above.
         lend_person = input("Who is it? ")
 
         lend_person = int(lend_person)
@@ -557,8 +589,8 @@ def show_all_loans():
     """
     Note that this only shows currently active loans, i.e. not historical ones
     """
-    theDB = Bdb(dbLocation)
-    for item in theDB.get_all_loans():
+    the_db = Bdb(dbLocation)
+    for item in the_db.get_all_loans():
         print(item)
     input("Press any key to continue.")
 
@@ -577,6 +609,7 @@ def edit_person():
         lend_person = results[lend_person - 1]
         lend_person = list(lend_person)
         lend_person = create_person_from_list(lend_person)
+        edit_person_helper(lend_person)
 
     elif todo.strip().lower() == 'y':
         uid = input("Ok, enter it now: ")
@@ -684,13 +717,13 @@ if __name__ == '__main__':
             elif todo == 5:
                 search_people()
             elif todo == 6:
-                pass
+                edit_person()
             elif todo == 7:
                 pass
             elif todo == 8:
                 pass
             elif todo == 9:
-                pass
+                continue
             else:
                 print("Invalid choice.")
                 continue
