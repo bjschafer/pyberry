@@ -280,7 +280,7 @@ def add_book():
                 str(book.authors).strip('[]')
             )))
             books.append(book)
-        user_choice = eval(input("Which result would you like? Or hit enter for none."))
+        user_choice = input("Which result would you like? Or hit enter for none.")
 
         if user_choice == '':
             return 2
@@ -291,17 +291,17 @@ def add_book():
 
         book = books[user_choice]
 
-        bc = eval(input('''Please enter a unique barcode, or -1 to autogenerate: '''))
+        bc = input('''Please enter a unique barcode, or -1 to autogenerate: ''')
         bc = int(bc)
         book.bc = bc
 
-        location = eval(input('''Please enter the location of the book, default blank: '''))
+        location = input('''Please enter the location of the book, default blank: ''')
         book.location = location
 
-        call_num = eval(input('''Please enter the call number of the book: '''))
+        call_num = input('''Please enter the call number of the book: ''')
         book.call_num = call_num
 
-        tags = eval(input('''Please enter any tags, separated by a comma: '''))
+        tags = input('''Please enter any tags, separated by a comma: ''')
         tags = tags.strip()
         book.tags = tags
 
@@ -322,13 +322,13 @@ def add_book():
 
 
 def delete_book():
-    to_do = eval(input('''We're going to delete a book.  Do you have the barcode? [y/N]: '''))
+    to_do = input('''We're going to delete a book.  Do you have the barcode? [y/N]: ''')
     if to_do.strip() == "" or to_do.strip().lower() == "n":
         results = search_book_helper()
         i = 1
         for item in results:
             print((i + ") " + item))  # not sure how this will come out.
-        del_me = eval(input("Which one is it? "))
+        del_me = input("Which one is it? ")
 
         del_me = int(del_me)
 
@@ -340,7 +340,7 @@ def delete_book():
         print("Deleted.")
 
     elif to_do.strip().lower() == "y":
-        del_me = eval(input("Ok, enter it now: "))
+        del_me = input("Ok, enter it now: ")
         if del_me.strip() == "":
             print("Invalid input.")
         else:
@@ -644,7 +644,7 @@ if __name__ == '__main__':
     print("Welcome to PyBerry!")
 
     while run:
-        todo = eval(input('''What would you like to do?  Your choices are:\n
+        todo = input('''What would you like to do?  Your choices are:\n
         1) Add a book\n
         2) Delete a book\n
         3) Edit a book\n
@@ -652,7 +652,7 @@ if __name__ == '__main__':
         5) Show all books\n
         6) Lending\n
         7) Change database location\n
-        8) Exit: '''))
+        8) Exit: ''')
 
         try:
             todo = int(todo)
